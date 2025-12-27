@@ -29,6 +29,15 @@ export interface BSTNode {
 
 type NodeState = 'default' | 'current' | 'found' | 'visited' | 'inserting' | 'path';
 
+/** Serializable node for storing in snapshots (no pre-calculated positions) */
+interface SnapshotNode {
+  value: number;
+  state: NodeState;
+  left: SnapshotNode | null;
+  right: SnapshotNode | null;
+}
+
+/** Node with calculated positions for rendering */
 interface RenderNode {
   value: number;
   x: number;
@@ -38,8 +47,9 @@ interface RenderNode {
   right: RenderNode | null;
 }
 
+/** Data stored in step snapshots - positions calculated at draw time */
 interface BSTData {
-  root: RenderNode | null;
+  root: SnapshotNode | null;
   message?: string;
 }
 
@@ -88,62 +98,73 @@ function insertIntoBST(root: BSTNode | null, value: number): BSTNode {
   return root;
 }
 
-function getTreeDepth(node: BSTNode | null): number {
-  if (!node) {
-    return 0;
-  }
-  return 1 + Math.max(getTreeDepth(node.left), getTreeDepth(node.right));
-}
-
 // =============================================================================
 // Layout Calculation
 // =============================================================================
 
-function calculatePositions(
+/** Convert BST to SnapshotNode with state map (for storing in snapshots) */
+function bstToSnapshotNode(
   node: BSTNode | null,
-  x: number,
-  y: number,
-  horizontalSpread: number,
-  stateMap: Map<number, NodeState>
-): RenderNode | null {
+  stateMap: Map<number, NodeState> = new Map()
+): SnapshotNode | null {
   if (!node) {
     return null;
   }
 
-  const state = stateMap.get(node.value) ?? 'default';
+  return {
+    value: node.value,
+    state: stateMap.get(node.value) ?? 'default',
+    left: bstToSnapshotNode(node.left, stateMap),
+    right: bstToSnapshotNode(node.right, stateMap),
+  };
+}
+
+/** Get tree depth for layout calculations */
+function getSnapshotTreeDepth(node: SnapshotNode | null): number {
+  if (!node) {
+    return 0;
+  }
+  return 1 + Math.max(getSnapshotTreeDepth(node.left), getSnapshotTreeDepth(node.right));
+}
+
+/** Calculate positions for a single node and its children */
+function calculatePositions(
+  node: SnapshotNode | null,
+  x: number,
+  y: number,
+  horizontalSpread: number
+): RenderNode | null {
+  if (!node) {
+    return null;
+  }
 
   return {
     value: node.value,
     x,
     y,
-    state,
+    state: node.state,
     left: calculatePositions(
       node.left,
       x - horizontalSpread,
       y + LEVEL_HEIGHT,
-      horizontalSpread / 2,
-      stateMap
+      horizontalSpread / 2
     ),
     right: calculatePositions(
       node.right,
       x + horizontalSpread,
       y + LEVEL_HEIGHT,
-      horizontalSpread / 2,
-      stateMap
+      horizontalSpread / 2
     ),
   };
 }
 
-function bstToRenderTree(
-  root: BSTNode | null,
-  canvasWidth: number,
-  stateMap: Map<number, NodeState> = new Map()
-): RenderNode | null {
+/** Convert SnapshotNode to RenderNode with positions calculated for canvas width */
+function snapshotToRenderTree(root: SnapshotNode | null, canvasWidth: number): RenderNode | null {
   if (!root) {
     return null;
   }
 
-  const depth = getTreeDepth(root);
+  const depth = getSnapshotTreeDepth(root);
   const initialSpread = Math.min(
     (canvasWidth - CANVAS_PADDING * 2) / 4,
     MIN_NODE_SPACING * Math.pow(2, depth - 1)
@@ -153,8 +174,7 @@ function bstToRenderTree(
     root,
     canvasWidth / 2,
     CANVAS_PADDING + NODE_RADIUS + 20,
-    initialSpread,
-    stateMap
+    initialSpread
   );
 }
 
@@ -162,11 +182,7 @@ function bstToRenderTree(
 // Step Generation
 // =============================================================================
 
-export function generateInsertSteps(
-  root: BSTNode | null,
-  value: number,
-  canvasWidth: number
-): Step<BSTData>[] {
+export function generateInsertSteps(root: BSTNode | null, value: number): Step<BSTData>[] {
   const steps: Step<BSTData>[] = [];
   let stepId = 0;
   let comparisons = 0;
@@ -176,7 +192,7 @@ export function generateInsertSteps(
   steps.push({
     id: stepId++,
     description: `Inserting value ${value} into BST`,
-    snapshot: { data: { root: bstToRenderTree(root, canvasWidth, stateMap) } },
+    snapshot: { data: { root: bstToSnapshotNode(root, stateMap) } },
     meta: createStepMeta({ comparisons, highlightedLine: 1 }),
   });
 
@@ -187,7 +203,7 @@ export function generateInsertSteps(
     steps.push({
       id: stepId++,
       description: `Tree is empty. Creating root node with value ${value}`,
-      snapshot: { data: { root: bstToRenderTree(newRoot, canvasWidth, insertMap) } },
+      snapshot: { data: { root: bstToSnapshotNode(newRoot, insertMap) } },
       meta: createStepMeta({ comparisons, highlightedLine: 2 }),
     });
 
@@ -195,7 +211,7 @@ export function generateInsertSteps(
     steps.push({
       id: stepId++,
       description: `Successfully inserted ${value} as root`,
-      snapshot: { data: { root: bstToRenderTree(newRoot, canvasWidth, finalMap) } },
+      snapshot: { data: { root: bstToSnapshotNode(newRoot, finalMap) } },
       meta: createStepMeta({ comparisons, highlightedLine: 3 }),
     });
 
@@ -219,7 +235,7 @@ export function generateInsertSteps(
       steps.push({
         id: stepId++,
         description: `Value ${value} already exists in tree. Skipping insertion.`,
-        snapshot: { data: { root: bstToRenderTree(root, canvasWidth, pathMap) } },
+        snapshot: { data: { root: bstToSnapshotNode(root, pathMap) } },
         meta: createStepMeta({ comparisons, highlightedLine: 4 }),
       });
       return steps;
@@ -229,7 +245,7 @@ export function generateInsertSteps(
       steps.push({
         id: stepId++,
         description: `${value} < ${current.value}, go left`,
-        snapshot: { data: { root: bstToRenderTree(root, canvasWidth, pathMap) } },
+        snapshot: { data: { root: bstToSnapshotNode(root, pathMap) } },
         meta: createStepMeta({ comparisons, highlightedLine: 5 }),
       });
 
@@ -245,7 +261,7 @@ export function generateInsertSteps(
         steps.push({
           id: stepId++,
           description: `Found empty left slot. Inserting ${value}`,
-          snapshot: { data: { root: bstToRenderTree(newRoot, canvasWidth, insertMap) } },
+          snapshot: { data: { root: bstToSnapshotNode(newRoot, insertMap) } },
           meta: createStepMeta({ comparisons, highlightedLine: 6 }),
         });
 
@@ -253,7 +269,7 @@ export function generateInsertSteps(
         steps.push({
           id: stepId++,
           description: `Successfully inserted ${value}`,
-          snapshot: { data: { root: bstToRenderTree(newRoot, canvasWidth, finalMap) } },
+          snapshot: { data: { root: bstToSnapshotNode(newRoot, finalMap) } },
           meta: createStepMeta({ comparisons, highlightedLine: 7 }),
         });
 
@@ -264,7 +280,7 @@ export function generateInsertSteps(
       steps.push({
         id: stepId++,
         description: `${value} > ${current.value}, go right`,
-        snapshot: { data: { root: bstToRenderTree(root, canvasWidth, pathMap) } },
+        snapshot: { data: { root: bstToSnapshotNode(root, pathMap) } },
         meta: createStepMeta({ comparisons, highlightedLine: 5 }),
       });
 
@@ -280,7 +296,7 @@ export function generateInsertSteps(
         steps.push({
           id: stepId++,
           description: `Found empty right slot. Inserting ${value}`,
-          snapshot: { data: { root: bstToRenderTree(newRoot, canvasWidth, insertMap) } },
+          snapshot: { data: { root: bstToSnapshotNode(newRoot, insertMap) } },
           meta: createStepMeta({ comparisons, highlightedLine: 6 }),
         });
 
@@ -288,7 +304,7 @@ export function generateInsertSteps(
         steps.push({
           id: stepId++,
           description: `Successfully inserted ${value}`,
-          snapshot: { data: { root: bstToRenderTree(newRoot, canvasWidth, finalMap) } },
+          snapshot: { data: { root: bstToSnapshotNode(newRoot, finalMap) } },
           meta: createStepMeta({ comparisons, highlightedLine: 7 }),
         });
 
@@ -301,11 +317,7 @@ export function generateInsertSteps(
   return steps;
 }
 
-export function generateSearchSteps(
-  root: BSTNode | null,
-  value: number,
-  canvasWidth: number
-): Step<BSTData>[] {
+export function generateSearchSteps(root: BSTNode | null, value: number): Step<BSTData>[] {
   const steps: Step<BSTData>[] = [];
   let stepId = 0;
   let comparisons = 0;
@@ -314,7 +326,7 @@ export function generateSearchSteps(
   steps.push({
     id: stepId++,
     description: `Searching for value ${value}`,
-    snapshot: { data: { root: bstToRenderTree(root, canvasWidth, stateMap) } },
+    snapshot: { data: { root: bstToSnapshotNode(root, stateMap) } },
     meta: createStepMeta({ comparisons, highlightedLine: 1 }),
   });
 
@@ -344,7 +356,7 @@ export function generateSearchSteps(
         id: stepId++,
         description: `Found ${value}!`,
         snapshot: {
-          data: { root: bstToRenderTree(root, canvasWidth, pathMap), message: 'Found!' },
+          data: { root: bstToSnapshotNode(root, pathMap), message: 'Found!' },
         },
         meta: createStepMeta({ comparisons, highlightedLine: 3 }),
       });
@@ -355,7 +367,7 @@ export function generateSearchSteps(
       steps.push({
         id: stepId++,
         description: `${value} < ${current.value}, go left`,
-        snapshot: { data: { root: bstToRenderTree(root, canvasWidth, pathMap) } },
+        snapshot: { data: { root: bstToSnapshotNode(root, pathMap) } },
         meta: createStepMeta({ comparisons, highlightedLine: 4 }),
       });
 
@@ -366,7 +378,7 @@ export function generateSearchSteps(
           id: stepId++,
           description: `No left child. Value ${value} not found.`,
           snapshot: {
-            data: { root: bstToRenderTree(root, canvasWidth, notFoundMap), message: 'Not found' },
+            data: { root: bstToSnapshotNode(root, notFoundMap), message: 'Not found' },
           },
           meta: createStepMeta({ comparisons, highlightedLine: 5 }),
         });
@@ -377,7 +389,7 @@ export function generateSearchSteps(
       steps.push({
         id: stepId++,
         description: `${value} > ${current.value}, go right`,
-        snapshot: { data: { root: bstToRenderTree(root, canvasWidth, pathMap) } },
+        snapshot: { data: { root: bstToSnapshotNode(root, pathMap) } },
         meta: createStepMeta({ comparisons, highlightedLine: 4 }),
       });
 
@@ -388,7 +400,7 @@ export function generateSearchSteps(
           id: stepId++,
           description: `No right child. Value ${value} not found.`,
           snapshot: {
-            data: { root: bstToRenderTree(root, canvasWidth, notFoundMap), message: 'Not found' },
+            data: { root: bstToSnapshotNode(root, notFoundMap), message: 'Not found' },
           },
           meta: createStepMeta({ comparisons, highlightedLine: 5 }),
         });
@@ -401,15 +413,15 @@ export function generateSearchSteps(
   return steps;
 }
 
-export function generateInorderSteps(root: BSTNode | null, canvasWidth: number): Step<BSTData>[] {
+export function generateInorderSteps(root: BSTNode | null): Step<BSTData>[] {
   const steps: Step<BSTData>[] = [];
   let stepId = 0;
   const visited: number[] = [];
 
   steps.push({
     id: stepId++,
-    description: 'Starting inorder traversal (Left → Root → Right)',
-    snapshot: { data: { root: bstToRenderTree(root, canvasWidth) } },
+    description: 'Starting inorder traversal (Left -> Root -> Right)',
+    snapshot: { data: { root: bstToSnapshotNode(root) } },
     meta: createStepMeta({ highlightedLine: 1 }),
   });
 
@@ -439,7 +451,7 @@ export function generateInorderSteps(root: BSTNode | null, canvasWidth: number):
     steps.push({
       id: stepId++,
       description: `Visit node ${node.value}. Inorder so far: [${visited.join(', ')}]`,
-      snapshot: { data: { root: bstToRenderTree(root, canvasWidth, stateMap) } },
+      snapshot: { data: { root: bstToSnapshotNode(root, stateMap) } },
       meta: createStepMeta({ reads: visited.length, highlightedLine: 3 }),
     });
 
@@ -455,7 +467,7 @@ export function generateInorderSteps(root: BSTNode | null, canvasWidth: number):
   steps.push({
     id: stepId++,
     description: `Inorder traversal complete: [${visited.join(', ')}]`,
-    snapshot: { data: { root: bstToRenderTree(root, canvasWidth, finalMap) } },
+    snapshot: { data: { root: bstToSnapshotNode(root, finalMap) } },
     meta: createStepMeta({ reads: visited.length, highlightedLine: 4 }),
   });
 
@@ -526,8 +538,9 @@ function drawBST(
   width: number,
   height: number
 ): void {
-  // Clear canvas
-  ctx.clearRect(0, 0, width, height);
+  // Clear canvas with dark background
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, width, height);
 
   if (!data.root) {
     // Draw empty tree message
@@ -539,7 +552,11 @@ function drawBST(
     return;
   }
 
-  drawTree(ctx, data.root);
+  // Convert snapshot to render tree with positions calculated for current canvas width
+  const renderRoot = snapshotToRenderTree(data.root, width);
+  if (renderRoot) {
+    drawTree(ctx, renderRoot);
+  }
 
   // Draw message if present
   if (data.message) {
@@ -564,7 +581,6 @@ class BinarySearchTreeVisualizer implements Visualizer<BSTData> {
   };
 
   private currentTree: BSTNode | null = null;
-  private canvasWidth = 800;
 
   getInitialState(): Snapshot<BSTData> {
     // Start with a sample tree
@@ -576,7 +592,7 @@ class BinarySearchTreeVisualizer implements Visualizer<BSTData> {
 
     return {
       data: {
-        root: bstToRenderTree(this.currentTree, this.canvasWidth),
+        root: bstToSnapshotNode(this.currentTree),
       },
     };
   }
@@ -588,7 +604,7 @@ class BinarySearchTreeVisualizer implements Visualizer<BSTData> {
     switch (type) {
       case 'insert':
         if (value !== undefined) {
-          const steps = generateInsertSteps(this.currentTree, value, this.canvasWidth);
+          const steps = generateInsertSteps(this.currentTree, value);
           // Update current tree after insert
           this.currentTree = insertIntoBST(cloneBST(this.currentTree), value);
           return steps;
@@ -597,12 +613,12 @@ class BinarySearchTreeVisualizer implements Visualizer<BSTData> {
 
       case 'search':
         if (value !== undefined) {
-          return generateSearchSteps(this.currentTree, value, this.canvasWidth);
+          return generateSearchSteps(this.currentTree, value);
         }
         break;
 
       case 'inorder':
-        return generateInorderSteps(this.currentTree, this.canvasWidth);
+        return generateInorderSteps(this.currentTree);
 
       case 'clear':
         this.currentTree = null;
@@ -620,7 +636,7 @@ class BinarySearchTreeVisualizer implements Visualizer<BSTData> {
       {
         id: 0,
         description: 'Binary Search Tree ready',
-        snapshot: { data: { root: bstToRenderTree(this.currentTree, this.canvasWidth) } },
+        snapshot: { data: { root: bstToSnapshotNode(this.currentTree) } },
         meta: createStepMeta(),
       },
     ];
@@ -632,7 +648,6 @@ class BinarySearchTreeVisualizer implements Visualizer<BSTData> {
     const width = canvas.width / dpr;
     const height = canvas.height / dpr;
 
-    this.canvasWidth = width;
     drawBST(snapshot.data, ctx, width, height);
   }
 

@@ -7,6 +7,7 @@ import type { CanvasDimensions, RenderContext } from '../core/types';
 
 export class CanvasManager {
   private canvas: HTMLCanvasElement;
+  private container: HTMLElement;
   private ctx: CanvasRenderingContext2D;
   private dpr: number;
   private resizeObserver: ResizeObserver | null = null;
@@ -14,6 +15,7 @@ export class CanvasManager {
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
+    this.container = canvas.parentElement ?? canvas;
     const context = canvas.getContext('2d', { alpha: false });
     if (!context) {
       throw new Error('Failed to get 2D canvas context');
@@ -29,7 +31,13 @@ export class CanvasManager {
    * Configure canvas for HiDPI/Retina display
    */
   private setupHiDPI(): void {
-    const rect = this.canvas.getBoundingClientRect();
+    // Use container dimensions instead of canvas (canvas is position:absolute)
+    const rect = this.container.getBoundingClientRect();
+
+    // Skip if container has no size yet
+    if (rect.width === 0 || rect.height === 0) {
+      return;
+    }
 
     // Set the "actual" size of the canvas (scaled up for HiDPI)
     this.canvas.width = Math.floor(rect.width * this.dpr);
@@ -49,7 +57,7 @@ export class CanvasManager {
   private setupResizeObserver(): void {
     this.resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
-        if (entry.target === this.canvas) {
+        if (entry.target === this.container) {
           // Update DPR in case it changed (e.g., moving between displays)
           this.dpr = window.devicePixelRatio || 1;
           this.setupHiDPI();
@@ -61,7 +69,8 @@ export class CanvasManager {
       }
     });
 
-    this.resizeObserver.observe(this.canvas);
+    // Observe the container, not the canvas (canvas is position:absolute)
+    this.resizeObserver.observe(this.container);
   }
 
   /**
@@ -86,7 +95,7 @@ export class CanvasManager {
    * Get logical (CSS) dimensions
    */
   getDimensions(): CanvasDimensions {
-    const rect = this.canvas.getBoundingClientRect();
+    const rect = this.container.getBoundingClientRect();
     return {
       width: rect.width,
       height: rect.height,

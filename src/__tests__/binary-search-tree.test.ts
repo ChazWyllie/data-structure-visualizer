@@ -11,8 +11,6 @@ import {
 } from '../visualizers/binary-search-tree';
 import type { BSTNode } from '../visualizers/binary-search-tree';
 
-const CANVAS_WIDTH = 800;
-
 // Helper to build a BST from values
 function buildBST(values: number[]): BSTNode | null {
   let root: BSTNode | null = null;
@@ -41,7 +39,7 @@ function buildBST(values: number[]): BSTNode | null {
 
 describe('generateInsertSteps', () => {
   it('should insert into empty tree', () => {
-    const steps = generateInsertSteps(null, 50, CANVAS_WIDTH);
+    const steps = generateInsertSteps(null, 50);
 
     expect(steps.length).toBeGreaterThan(1);
     const finalStep = steps[steps.length - 1];
@@ -52,7 +50,7 @@ describe('generateInsertSteps', () => {
 
   it('should insert left when value is smaller', () => {
     const root = buildBST([50]);
-    const steps = generateInsertSteps(root, 30, CANVAS_WIDTH);
+    const steps = generateInsertSteps(root, 30);
 
     // Should have comparison step saying "go left"
     const goLeftStep = steps.find((s) => s.description.includes('go left'));
@@ -64,7 +62,7 @@ describe('generateInsertSteps', () => {
 
   it('should insert right when value is larger', () => {
     const root = buildBST([50]);
-    const steps = generateInsertSteps(root, 70, CANVAS_WIDTH);
+    const steps = generateInsertSteps(root, 70);
 
     // Should have comparison step saying "go right"
     const goRightStep = steps.find((s) => s.description.includes('go right'));
@@ -76,7 +74,7 @@ describe('generateInsertSteps', () => {
 
   it('should traverse multiple levels for deep insert', () => {
     const root = buildBST([50, 30, 70]);
-    const steps = generateInsertSteps(root, 20, CANVAS_WIDTH);
+    const steps = generateInsertSteps(root, 20);
 
     // Should go left twice: 50 -> 30 -> insert at 30's left
     const goLeftSteps = steps.filter((s) => s.description.includes('go left'));
@@ -88,7 +86,7 @@ describe('generateInsertSteps', () => {
 
   it('should handle duplicate values', () => {
     const root = buildBST([50, 30, 70]);
-    const steps = generateInsertSteps(root, 50, CANVAS_WIDTH);
+    const steps = generateInsertSteps(root, 50);
 
     const duplicateStep = steps.find((s) => s.description.includes('already exists'));
     expect(duplicateStep).toBeDefined();
@@ -96,7 +94,7 @@ describe('generateInsertSteps', () => {
 
   it('should track comparison count', () => {
     const root = buildBST([50, 30, 70, 20, 40]);
-    const steps = generateInsertSteps(root, 25, CANVAS_WIDTH);
+    const steps = generateInsertSteps(root, 25);
 
     // Path: 50 -> 30 -> 20 -> insert
     // Should have at least 3 comparisons
@@ -112,7 +110,7 @@ describe('generateInsertSteps', () => {
 describe('generateSearchSteps', () => {
   it('should find existing value at root', () => {
     const root = buildBST([50, 30, 70]);
-    const steps = generateSearchSteps(root, 50, CANVAS_WIDTH);
+    const steps = generateSearchSteps(root, 50);
 
     const foundStep = steps.find((s) => s.description.includes('Found'));
     expect(foundStep).toBeDefined();
@@ -121,7 +119,7 @@ describe('generateSearchSteps', () => {
 
   it('should find existing value in left subtree', () => {
     const root = buildBST([50, 30, 70, 20, 40]);
-    const steps = generateSearchSteps(root, 20, CANVAS_WIDTH);
+    const steps = generateSearchSteps(root, 20);
 
     const foundStep = steps.find((s) => s.description.includes('Found 20'));
     expect(foundStep).toBeDefined();
@@ -129,7 +127,7 @@ describe('generateSearchSteps', () => {
 
   it('should find existing value in right subtree', () => {
     const root = buildBST([50, 30, 70, 60, 80]);
-    const steps = generateSearchSteps(root, 80, CANVAS_WIDTH);
+    const steps = generateSearchSteps(root, 80);
 
     const foundStep = steps.find((s) => s.description.includes('Found 80'));
     expect(foundStep).toBeDefined();
@@ -137,7 +135,7 @@ describe('generateSearchSteps', () => {
 
   it('should handle value not found', () => {
     const root = buildBST([50, 30, 70]);
-    const steps = generateSearchSteps(root, 25, CANVAS_WIDTH);
+    const steps = generateSearchSteps(root, 25);
 
     const notFoundStep = steps.find((s) => s.description.includes('not found'));
     expect(notFoundStep).toBeDefined();
@@ -145,7 +143,7 @@ describe('generateSearchSteps', () => {
   });
 
   it('should handle search in empty tree', () => {
-    const steps = generateSearchSteps(null, 50, CANVAS_WIDTH);
+    const steps = generateSearchSteps(null, 50);
 
     expect(steps.length).toBe(2);
     const finalStep = steps[steps.length - 1];
@@ -155,7 +153,7 @@ describe('generateSearchSteps', () => {
 
   it('should track comparison count during search', () => {
     const root = buildBST([50, 30, 70, 20, 40, 60, 80]);
-    const steps = generateSearchSteps(root, 80, CANVAS_WIDTH);
+    const steps = generateSearchSteps(root, 80);
 
     // Path: 50 -> 70 -> 80 (3 comparisons)
     const foundStep = steps.find((s) => s.description.includes('Found'));
@@ -170,7 +168,7 @@ describe('generateSearchSteps', () => {
 describe('generateInorderSteps', () => {
   it('should visit nodes in sorted order', () => {
     const root = buildBST([50, 30, 70, 20, 40, 60, 80]);
-    const steps = generateInorderSteps(root, CANVAS_WIDTH);
+    const steps = generateInorderSteps(root);
 
     const finalStep = steps[steps.length - 1];
     expect(finalStep.description).toContain('20, 30, 40, 50, 60, 70, 80');
@@ -178,14 +176,14 @@ describe('generateInorderSteps', () => {
 
   it('should handle single node tree', () => {
     const root = buildBST([42]);
-    const steps = generateInorderSteps(root, CANVAS_WIDTH);
+    const steps = generateInorderSteps(root);
 
     const finalStep = steps[steps.length - 1];
     expect(finalStep.description).toContain('42');
   });
 
   it('should handle empty tree', () => {
-    const steps = generateInorderSteps(null, CANVAS_WIDTH);
+    const steps = generateInorderSteps(null);
 
     expect(steps.length).toBe(2);
     const finalStep = steps[steps.length - 1];
@@ -194,7 +192,7 @@ describe('generateInorderSteps', () => {
 
   it('should handle left-skewed tree', () => {
     const root = buildBST([50, 40, 30, 20, 10]);
-    const steps = generateInorderSteps(root, CANVAS_WIDTH);
+    const steps = generateInorderSteps(root);
 
     const finalStep = steps[steps.length - 1];
     expect(finalStep.description).toContain('10, 20, 30, 40, 50');
@@ -202,7 +200,7 @@ describe('generateInorderSteps', () => {
 
   it('should handle right-skewed tree', () => {
     const root = buildBST([10, 20, 30, 40, 50]);
-    const steps = generateInorderSteps(root, CANVAS_WIDTH);
+    const steps = generateInorderSteps(root);
 
     const finalStep = steps[steps.length - 1];
     expect(finalStep.description).toContain('10, 20, 30, 40, 50');
@@ -210,7 +208,7 @@ describe('generateInorderSteps', () => {
 
   it('should create a step for each node visited', () => {
     const root = buildBST([50, 30, 70]);
-    const steps = generateInorderSteps(root, CANVAS_WIDTH);
+    const steps = generateInorderSteps(root);
 
     // Should have: initial + 3 visit steps + final = 5 steps
     // Actually: initial + node visits + final
@@ -220,7 +218,7 @@ describe('generateInorderSteps', () => {
 
   it('should track reads counter', () => {
     const root = buildBST([50, 30, 70, 20, 40]);
-    const steps = generateInorderSteps(root, CANVAS_WIDTH);
+    const steps = generateInorderSteps(root);
 
     const finalStep = steps[steps.length - 1];
     expect(finalStep.meta.reads).toBe(5);
