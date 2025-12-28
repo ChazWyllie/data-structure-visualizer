@@ -28,9 +28,6 @@ import '../visualizers';
 
 /* eslint-disable no-console */
 
-// Import visualizers to trigger registration
-import '../visualizers';
-
 /**
  * Main Application Controller
  */
@@ -100,11 +97,29 @@ export class App {
       this.render();
     });
 
-    // Initial render
-    this.render();
+    // Auto-load first visualizer if available
+    this.loadDefaultVisualizer();
+
+    // Initial render - defer to ensure layout is complete
+    requestAnimationFrame(() => {
+      this.canvasManager.refresh();
+      this.render();
+    });
 
     console.log('Data Structure Visualizer initialized');
     console.log(`Registered visualizers: ${registry.count}`);
+  }
+
+  /**
+   * Load the default visualizer (first registered)
+   */
+  private loadDefaultVisualizer(): void {
+    const visualizers = registry.getAll();
+    if (visualizers.length > 0) {
+      const defaultId = visualizers[0].id;
+      this._selector.select(defaultId);
+      this.loadVisualizer(defaultId);
+    }
   }
 
   /**
@@ -286,9 +301,11 @@ export class App {
     this.stepEngine.pause();
 
     // Generate new steps based on the action
+    // Pass user inputs as params, not data
     const steps = this.currentVisualizer.getSteps({
       type: actionId,
-      data: inputs,
+      data: null as unknown,
+      params: inputs,
     });
 
     // Load new steps into engine
@@ -377,6 +394,9 @@ export class App {
    * Render the current state
    */
   private render(): void {
+    // Ensure canvas is ready for drawing with proper HiDPI scale
+    this.canvasManager.prepareForDraw();
+
     if (!this.currentVisualizer) {
       this.renderEmptyState();
       return;

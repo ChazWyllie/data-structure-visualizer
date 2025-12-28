@@ -115,17 +115,27 @@ export class CanvasManager {
   clear(backgroundColor?: string): void {
     const { width, height } = this.getDimensions();
 
-    // Reset transform to clear properly
-    this.ctx.save();
+    // Reset transform to clear the full canvas buffer
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.ctx.restore();
+
+    // Re-apply HiDPI scale for subsequent drawing
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
 
     // Fill with background color if provided
     if (backgroundColor) {
       this.ctx.fillStyle = backgroundColor;
       this.ctx.fillRect(0, 0, width, height);
     }
+  }
+
+  /**
+   * Prepare canvas for drawing (ensures HiDPI scale is applied)
+   * Call this before any draw operation to guarantee correct scaling
+   */
+  prepareForDraw(): void {
+    // Ensure HiDPI scale is applied
+    this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
   }
 
   /**
@@ -141,6 +151,15 @@ export class CanvasManager {
    */
   refresh(): void {
     this.dpr = window.devicePixelRatio || 1;
+
+    // Check if container has dimensions yet
+    const rect = this.container.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) {
+      // Retry after a short delay to allow layout to complete
+      setTimeout(() => this.refresh(), 50);
+      return;
+    }
+
     this.setupHiDPI();
   }
 

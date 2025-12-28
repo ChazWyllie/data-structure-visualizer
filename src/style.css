@@ -186,16 +186,18 @@ body {
   grid-area: main / main / main / sidebar;
   display: grid;
   grid-template-columns: 1fr var(--sidebar-width);
-  grid-template-rows: 1fr; /* Explicit row height */
+  grid-template-rows: 1fr;
+  grid-template-areas: 'canvas sidebar';
   overflow: hidden;
 }
 
 .canvas-section {
+  grid-area: canvas;
   display: flex;
   flex-direction: column;
   background-color: var(--bg-primary);
   overflow: hidden;
-  min-height: 0; /* Allow flex shrinking */
+  min-height: 0;
 }
 
 .canvas-container {
