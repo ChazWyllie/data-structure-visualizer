@@ -16,7 +16,9 @@ export function createLayout(): HTMLElement {
   app.innerHTML = `
     <header class="app-header">
       <div class="header-brand">
-        <h1 class="header-title">Data Structure Visualizer</h1>
+        <a href="#home" id="home-link" class="header-home-link" title="Back to Home">
+          <h1 class="header-title">Data Structure Visualizer</h1>
+        </a>
       </div>
       <div class="header-selector" id="visualizer-selector-container">
         <!-- Visualizer selector will be mounted here -->
@@ -30,6 +32,9 @@ export function createLayout(): HTMLElement {
 
     <main class="app-main">
       <section class="canvas-section">
+        <div id="landing-root" class="landing-root">
+          <!-- Landing page will be mounted here -->
+        </div>
         <div class="canvas-container" id="canvas-container">
           <canvas id="main-canvas"></canvas>
         </div>

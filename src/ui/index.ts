@@ -7,3 +7,4 @@ export { PlaybackControls, type ControlsEventHandler, type SpeedChangeHandler } 
 export { VisualizerSelector, type SelectionHandler } from './selector';
 export { InfoPanel } from './info-panel';
 export { InputControls, type ActionCallback } from './input-controls';
+export { Landing, type LandingSelectHandler } from './landing';

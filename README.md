@@ -317,15 +317,28 @@ To use a custom domain:
 
 ## Roadmap (V2)
 
+### Implemented Visualizers
+
+- [x] **Binary Search Tree (BST)** — Insert, search, inorder traversal with tree visualization
+- [x] **Bubble Sort** — Classic O(n²) comparison sort with swap visualization
+- [x] **Selection Sort** — O(n²) find-minimum-and-swap algorithm
+- [x] **Insertion Sort** — O(n²) build-sorted-portion algorithm
+- [x] **Merge Sort** — O(n log n) divide and conquer with auxiliary array
+- [x] **Quick Sort** — O(n log n) partition-based sorting with pivot selection
+- [x] **Heap Sort** — O(n log n) heap-based extraction algorithm
+- [x] **Stack** — LIFO with push/pop operations and overflow detection
+- [x] **Queue** — FIFO with enqueue/dequeue operations
+- [x] **Linked List** — Singly linked list with insert/delete-by-value
+
 ### Planned Visualizers
 
-- [ ] **Binary Search Tree (BST)** — Insert, delete, search with tree traversals
 - [ ] **Graph BFS** — Breadth-first search with queue visualization
 - [ ] **Graph DFS** — Depth-first search with stack/recursion visualization
 - [ ] **Dijkstra's Algorithm** — Shortest path with priority queue
-- [ ] **Merge Sort** — Divide and conquer with auxiliary array
-- [ ] **Quick Sort** — Partition-based sorting with pivot selection
-- [ ] **Heap Sort** — Heap data structure visualization
+
+### Implemented Features
+
+- [x] **Dark/Light Theme** — Toggle between modes with localStorage persistence
 
 ### Planned Features
 

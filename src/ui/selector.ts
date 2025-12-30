@@ -103,4 +103,14 @@ export class VisualizerSelector {
       this.onSelect(id);
     }
   }
+
+  /**
+   * Clear the current selection (reset to placeholder)
+   */
+  clear(): void {
+    this.selectedId = null;
+    if (this.selectElement) {
+      this.selectElement.value = '';
+    }
+  }
 }

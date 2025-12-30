@@ -20,6 +20,7 @@ import {
   VisualizerSelector,
   InfoPanel,
   InputControls,
+  Landing,
 } from '../ui';
 import { StepEngine } from '../engine/step-engine';
 
@@ -40,6 +41,8 @@ export class App {
   private infoPanel!: InfoPanel;
   private inputControls!: InputControls;
   private stepEngine: StepEngine;
+  private landing!: Landing;
+  private isLandingMode = true;
 
   // State
   private currentVisualizer: Visualizer | null = null;
@@ -93,34 +96,21 @@ export class App {
     // Subscribe to step engine events
     this.setupStepEngineListeners();
 
+    // Initialize landing page
+    this.initLanding();
+
     // Handle canvas resize
     this.canvasManager.onResize(() => {
-      this.render();
+      if (!this.isLandingMode) {
+        this.render();
+      }
     });
 
-    // Auto-load first visualizer if available
-    this.loadDefaultVisualizer();
-
-    // Initial render - defer to ensure layout is complete
-    requestAnimationFrame(() => {
-      this.canvasManager.refresh();
-      this.render();
-    });
+    // Start in landing mode (do not auto-load a visualizer)
+    // Navigation is handled by main.ts via hash routing
 
     console.log('Data Structure Visualizer initialized');
     console.log(`Registered visualizers: ${registry.count}`);
-  }
-
-  /**
-   * Load the default visualizer (first registered)
-   */
-  private loadDefaultVisualizer(): void {
-    const visualizers = registry.getAll();
-    if (visualizers.length > 0) {
-      const defaultId = visualizers[0].id;
-      this._selector.select(defaultId);
-      this.loadVisualizer(defaultId);
-    }
   }
 
   /**
@@ -140,7 +130,19 @@ export class App {
   private initSelector(): void {
     const selectorContainer = getElement('visualizer-selector-container');
     this._selector = new VisualizerSelector(selectorContainer, (id) => {
-      this.loadVisualizer(id);
+      // When user selects via dropdown, navigate via hash
+      window.location.hash = `viz=${id}`;
+    });
+  }
+
+  /**
+   * Initialize landing page
+   */
+  private initLanding(): void {
+    const landingRoot = getElement('landing-root');
+    this.landing = new Landing(landingRoot, (id) => {
+      // When user clicks a landing card, navigate via hash
+      window.location.hash = `viz=${id}`;
     });
   }
 
@@ -490,6 +492,99 @@ export class App {
   private resetCounters(): void {
     this._counters = { comparisons: 0, swaps: 0, reads: 0, writes: 0 };
     this.infoPanel.resetCounters();
+  }
+
+  /**
+   * Set the landing mode (show/hide landing vs visualizer UI)
+   */
+  private setLandingMode(isLanding: boolean): void {
+    this.isLandingMode = isLanding;
+    const app = document.getElementById('app');
+    if (app) {
+      app.setAttribute('data-mode', isLanding ? 'landing' : 'visualizer');
+    }
+
+    // Hide/show and enable/disable controls based on mode
+    this.controls.setEnabled(!isLanding);
+  }
+
+  /**
+   * Show the landing page (public, called from main.ts)
+   */
+  showLanding(): void {
+    // Pause and reset engine
+    this.stepEngine.pause();
+    this.stepEngine.reset();
+
+    // Clear current visualizer
+    if (this.currentVisualizer?.dispose) {
+      this.currentVisualizer.dispose();
+    }
+    this.currentVisualizer = null;
+
+    // Reset UI state
+    this.resetCounters();
+    this.animationState = {
+      isPlaying: false,
+      currentStepIndex: 0,
+      totalSteps: 0,
+      speed: this.animationState.speed,
+    };
+    this.controls.updateState(this.animationState);
+
+    // Clear info panel
+    this.infoPanel.setDescription('Select a visualizer to begin');
+    this.infoPanel.setPseudocode(['// Select a visualizer']);
+    this.infoPanel.setComplexity({ time: { best: '—', average: '—', worst: '—' }, space: '—' });
+    this.infoPanel.setStepInfo(null, 0, 0);
+
+    // Clear input controls
+    this.inputControls.setInputFields([]);
+    this.inputControls.setActionButtons([]);
+
+    // Clear selector selection
+    this._selector.clear();
+
+    // Switch to landing mode
+    this.setLandingMode(true);
+    this.landing.mount();
+
+    console.log('Showing landing page');
+  }
+
+  /**
+   * Load a visualizer by ID (public, called from main.ts)
+   */
+  loadVisualizerById(id: string): boolean {
+    // Check if the visualizer exists
+    if (!registry.has(id)) {
+      console.warn(`Visualizer "${id}" not found, redirecting to home`);
+      return false;
+    }
+
+    // Switch out of landing mode
+    this.landing.unmount();
+    this.setLandingMode(false);
+
+    // Update selector UI (but don't trigger its callback)
+    if (this._selector.getSelectedId() !== id) {
+      // Manually update the dropdown value without firing onSelect
+      const selectEl = document.getElementById('visualizer-select') as HTMLSelectElement | null;
+      if (selectEl) {
+        selectEl.value = id;
+      }
+    }
+
+    // Load the visualizer
+    this.loadVisualizer(id);
+
+    // Initial render
+    requestAnimationFrame(() => {
+      this.canvasManager.refresh();
+      this.render();
+    });
+
+    return true;
   }
 
   /**
