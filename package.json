@@ -22,7 +22,8 @@
     "check": "npm run typecheck && npm run lint && npm run test && npm run build",
     "check:fast": "npm run lint && npm run test",
     "benchmark:env": "node tools/capture-env.cjs",
-    "prepare": "husky"
+    "prepare": "husky",
+    "collect:console": "node tools/collect-console.mjs http://localhost:3000/data-structure-visualizer/"
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
@@ -43,6 +44,7 @@
     "eslint-config-prettier": "^9.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.2",
+    "playwright": "^1.57.0",
     "prettier": "^3.4.2",
     "typescript": "~5.9.3",
     "vite": "^7.2.4",

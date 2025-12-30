@@ -1,0 +1,44 @@
+{
+    "inputs": [
+        {
+            "type": "promptString",
+            "id": "githubToken",
+            "description": "GitHub token (only if you enable GitHub MCP)",
+            "password": true
+        }
+    ],
+    "servers": {
+        "playwright": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@microsoft/mcp-server-playwright"
+            ]
+        },
+        "filesystem": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "${workspaceFolder}"
+            ]
+        },
+        "memory": {
+            "type": "stdio",
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-memory"
+            ]
+        }
+        /* Optional example (remote MCP over HTTP):
+    "githubRemote": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp",
+      "headers": { "Authorization": "Bearer ${input:githubToken}" }
+    }
+    */
+    }
+}

@@ -130,11 +130,22 @@ export class CanvasManager {
   }
 
   /**
-   * Prepare canvas for drawing (ensures HiDPI scale is applied)
+   * Prepare canvas for drawing (resets context state and applies HiDPI scale)
    * Call this before any draw operation to guarantee correct scaling
+   * and prevent state accumulation between different visualizers
    */
   prepareForDraw(): void {
-    // Ensure HiDPI scale is applied
+    // Full reset if available (clears all context state: transforms, clips, styles)
+    // This prevents state accumulation when switching between visualizers
+    if (typeof this.ctx.reset === 'function') {
+      this.ctx.reset();
+    } else {
+      // Fallback for older browsers: reset transform and clear common state
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      this.ctx.globalAlpha = 1;
+      this.ctx.globalCompositeOperation = 'source-over';
+    }
+    // Re-apply HiDPI scale for drawing
     this.ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
   }
 

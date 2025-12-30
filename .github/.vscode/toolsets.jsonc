@@ -1,0 +1,23 @@
+{
+    "reader": {
+        "tools": [
+            "codebase",
+            "search",
+            "usages",
+            "problems"
+        ],
+        "description": "Read-only context gathering"
+    },
+    "mcp_web": {
+        "tools": [
+            "playwright"
+        ],
+        "description": "Browser automation via Playwright MCP"
+    },
+    "mcp_fs": {
+        "tools": [
+            "filesystem"
+        ],
+        "description": "File operations via filesystem MCP"
+    }
+}

@@ -182,11 +182,12 @@ export class PlaybackControls {
     this.playPauseBtn.title = this.state.isPlaying ? 'Pause (Space)' : 'Play (Space)';
 
     // Update progress bar
-    if (this.state.totalSteps > 0) {
+    // Handle edge case: when totalSteps is 0 or 1, avoid division by zero
+    if (this.state.totalSteps <= 1) {
+      this.progressBar.value = this.state.totalSteps === 1 ? 100 : 0;
+    } else {
       const progress = (this.state.currentStepIndex / (this.state.totalSteps - 1)) * 100;
       this.progressBar.value = progress;
-    } else {
-      this.progressBar.value = 0;
     }
 
     // Update button states

@@ -87,6 +87,7 @@ export class App {
     this.initSelector();
     this.initInputControls();
     this.initMobileToggle();
+    this.initThemeToggle();
     this.infoPanel = new InfoPanel();
 
     // Subscribe to step engine events
@@ -172,6 +173,33 @@ export class App {
   }
 
   /**
+   * Initialize theme toggle button
+   */
+  private initThemeToggle(): void {
+    const THEME_KEY = 'dsv-theme';
+    const toggleBtn = document.getElementById('theme-toggle');
+    const iconSpan = toggleBtn?.querySelector('.icon');
+
+    if (!toggleBtn || !iconSpan) {
+      return;
+    }
+
+    // Apply saved theme or default to dark
+    const savedTheme = localStorage.getItem(THEME_KEY) ?? 'dark';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    iconSpan.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+
+    toggleBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme') ?? 'dark';
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem(THEME_KEY, newTheme);
+      iconSpan.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+    });
+  }
+
+  /**
    * Set up step engine event listeners
    */
   private setupStepEngineListeners(): void {
@@ -238,6 +266,7 @@ export class App {
    * Load a visualizer by ID
    */
   private loadVisualizer(id: string): void {
+    console.log(`[loadVisualizer] Loading: ${id}`);
     // Clean up previous visualizer
     if (this.currentVisualizer?.dispose) {
       this.currentVisualizer.dispose();
@@ -318,7 +347,7 @@ export class App {
       this.stepEngine.play();
     }
 
-    this.render();
+    // Note: render() is called automatically via step-change event from loadSteps()
     console.log(`Action "${actionId}" generated ${steps.length} steps`);
   }
 
@@ -350,7 +379,7 @@ export class App {
     this.resetCounters();
     this.controls.updateState(this.animationState);
     this.updateStepInfo();
-    this.render();
+    // Note: render() is called automatically via step-change event from loadSteps()
 
     console.log(`Generated ${steps.length} steps`);
   }
@@ -398,11 +427,15 @@ export class App {
     this.canvasManager.prepareForDraw();
 
     if (!this.currentVisualizer) {
+      console.log('[render] No currentVisualizer, rendering empty state');
       this.renderEmptyState();
       return;
     }
 
     const currentStep = this.stepEngine.getCurrentStep();
+    console.log(
+      `[render] visualizer=${this.currentVisualizer.config.id}, step=${currentStep?.id}, desc=${currentStep?.description?.slice(0, 50)}`
+    );
     if (currentStep) {
       const ctx = this.canvasManager.getContext();
       const snapshot: Snapshot<unknown> = currentStep.snapshot;
