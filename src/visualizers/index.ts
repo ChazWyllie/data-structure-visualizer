@@ -4,7 +4,6 @@
  */
 
 // Import visualizers to trigger self-registration
-import './array-demo';
 import './bubble-sort';
 import './selection-sort';
 import './insertion-sort';
@@ -28,7 +27,6 @@ import './a-star';
 import './dijkstra';
 
 // Re-export for convenience
-export { ArrayDemoVisualizer } from './array-demo';
 export { BubbleSortVisualizer } from './bubble-sort';
 export { SelectionSortVisualizer } from './selection-sort';
 export { InsertionSortVisualizer } from './insertion-sort';

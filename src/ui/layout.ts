@@ -4,6 +4,7 @@
  */
 
 import { HEADER_HEIGHT, SIDEBAR_WIDTH, CONTROLS_HEIGHT } from '../core/constants';
+import { iconMoon, iconChevronUp } from './icons';
 
 /**
  * Create the main application layout HTML structure
@@ -25,7 +26,7 @@ export function createLayout(): HTMLElement {
       </div>
       <div class="header-actions">
         <button class="btn btn-icon" id="theme-toggle" title="Toggle theme">
-          <span class="icon">🌙</span>
+          <span class="theme-icon" id="theme-icon">${iconMoon({ size: 20 })}</span>
         </button>
       </div>
     </header>
@@ -45,7 +46,7 @@ export function createLayout(): HTMLElement {
 
       <aside class="info-panel" id="info-panel">
         <button class="mobile-toggle" id="mobile-panel-toggle" aria-expanded="true" aria-controls="info-panel">
-          <span class="mobile-toggle-icon">▲</span>
+          <span class="mobile-toggle-icon">${iconChevronUp({ size: 16 })}</span>
           <span class="mobile-toggle-text">Algorithm Details</span>
         </button>
 

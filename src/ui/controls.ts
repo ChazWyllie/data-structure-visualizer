@@ -5,6 +5,14 @@
 
 import type { AnimationState, PlaybackCommand } from '../core/types';
 import {
+  iconPlay,
+  iconPause,
+  iconStepBack,
+  iconStepForward,
+  iconSkipStart,
+  iconSkipEnd,
+} from './icons';
+import {
   DEFAULT_ANIMATION_SPEED_MS,
   MIN_ANIMATION_SPEED_MS,
   MAX_ANIMATION_SPEED_MS,
@@ -57,19 +65,19 @@ export class PlaybackControls {
       <div class="controls-wrapper">
         <div class="controls-group controls-playback">
           <button class="btn btn-control" id="btn-reset" title="Reset (R)">
-            <span class="control-icon">⏮</span>
+            <span class="control-icon">${iconSkipStart({ size: 18 })}</span>
           </button>
           <button class="btn btn-control" id="btn-step-back" title="Step Back (←)">
-            <span class="control-icon">⏪</span>
+            <span class="control-icon">${iconStepBack({ size: 18 })}</span>
           </button>
           <button class="btn btn-control btn-primary" id="btn-play-pause" title="Play/Pause (Space)">
-            <span class="control-icon" id="play-pause-icon">▶</span>
+            <span class="control-icon" id="play-pause-icon">${iconPlay({ size: 18 })}</span>
           </button>
           <button class="btn btn-control" id="btn-step-forward" title="Step Forward (→)">
-            <span class="control-icon">⏩</span>
+            <span class="control-icon">${iconStepForward({ size: 18 })}</span>
           </button>
           <button class="btn btn-control" id="btn-go-to-end" title="Go to End (E)">
-            <span class="control-icon">⏭</span>
+            <span class="control-icon">${iconSkipEnd({ size: 18 })}</span>
           </button>
         </div>
 
@@ -176,9 +184,11 @@ export class PlaybackControls {
   updateState(state: Partial<AnimationState>): void {
     this.state = { ...this.state, ...state };
 
-    // Update play/pause button
-    const icon = this.container.querySelector('#play-pause-icon')!;
-    icon.textContent = this.state.isPlaying ? '⏸' : '▶';
+    // Update play/pause button with SVG icon
+    const iconContainer = this.container.querySelector('#play-pause-icon')!;
+    iconContainer.innerHTML = this.state.isPlaying
+      ? iconPause({ size: 18 })
+      : iconPlay({ size: 18 });
     this.playPauseBtn.title = this.state.isPlaying ? 'Pause (Space)' : 'Play (Space)';
 
     // Update progress bar

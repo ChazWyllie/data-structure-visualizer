@@ -3,6 +3,7 @@
  */
 
 import type { ArrayElement, ElementState } from '../core/types';
+import type { BarState } from '../render/animation';
 import {
   CANVAS_PADDING,
   BAR_GAP_RATIO,
@@ -24,17 +25,18 @@ export const STATE_COLORS: Record<ElementState, string> = {
   active: '#22d3ee',
 };
 
-export function drawArrayBars(
+/**
+ * Calculate bar geometry for an array of elements
+ */
+export function calculateBarGeometry(
   elements: ArrayElement<number>[],
-  ctx: CanvasRenderingContext2D,
   width: number,
   height: number
-): void {
-  ctx.fillStyle = '#0a0a0a';
-  ctx.fillRect(0, 0, width, height);
+): BarState[] {
   if (elements.length === 0) {
-    return;
+    return [];
   }
+
   const availableWidth = width - CANVAS_PADDING * 2;
   const availableHeight = height - CANVAS_PADDING * 2;
   const totalBars = elements.length;
@@ -45,21 +47,65 @@ export function drawArrayBars(
   );
   const gap = rawBarWidth - barWidth;
   const maxValue = Math.max(...elements.map((e) => e.value));
-  elements.forEach((element, index) => {
+
+  return elements.map((element, index) => {
     const barHeight = (element.value / maxValue) * availableHeight;
     const x = CANVAS_PADDING + index * (barWidth + gap);
     const y = height - CANVAS_PADDING - barHeight;
-    ctx.fillStyle = STATE_COLORS[element.state];
+
+    return {
+      index,
+      value: element.value,
+      x,
+      y,
+      width: barWidth,
+      height: barHeight,
+      color: STATE_COLORS[element.state],
+    };
+  });
+}
+
+/**
+ * Draw bars from pre-calculated bar states (for animated rendering)
+ */
+export function drawBarsFromState(
+  bars: BarState[],
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number
+): void {
+  // Clear canvas
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, width, height);
+
+  if (bars.length === 0) {
+    return;
+  }
+
+  for (const bar of bars) {
+    ctx.fillStyle = bar.color;
     ctx.beginPath();
-    ctx.roundRect(x, y, barWidth, barHeight, BAR_CORNER_RADIUS);
+    ctx.roundRect(bar.x, bar.y, bar.width, bar.height, BAR_CORNER_RADIUS);
     ctx.fill();
-    if (barWidth >= 20) {
+
+    // Draw value label if bar is wide enough
+    if (bar.width >= 20) {
       ctx.fillStyle = '#e4e4e7';
       ctx.font = '10px system-ui';
       ctx.textAlign = 'center';
-      ctx.fillText(element.value.toString(), x + barWidth / 2, y - 4);
+      ctx.fillText(bar.value.toString(), bar.x + bar.width / 2, bar.y - 4);
     }
-  });
+  }
+}
+
+export function drawArrayBars(
+  elements: ArrayElement<number>[],
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number
+): void {
+  const bars = calculateBarGeometry(elements, width, height);
+  drawBarsFromState(bars, ctx, width, height);
 }
 
 export function generateRandomArray(size: number): SortingData {

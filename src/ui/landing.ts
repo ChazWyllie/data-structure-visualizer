@@ -10,7 +10,7 @@ import type { VisualizerConfig } from '../core/types';
 const ALGORITHM_CATEGORIES = ['sorting', 'searching', 'graph'];
 
 /** Categories that count as "Data Structures" */
-const DATA_STRUCTURE_CATEGORIES = ['tree', 'stack', 'queue', 'linked-list'];
+const DATA_STRUCTURE_CATEGORIES = ['data-structure'];
 
 export type LandingSelectHandler = (visualizerId: string) => void;
 
@@ -131,7 +131,7 @@ export class Landing {
         <h3 class="landing-section-title">${title}</h3>
         <div class="landing-shelf">
           <div class="landing-shelf-track">
-            ${visualizers.map((viz) => this.renderCard(viz)).join('')}
+            ${visualizers.map((viz, index) => this.renderCard(viz, index)).join('')}
           </div>
         </div>
       </section>
@@ -139,15 +139,15 @@ export class Landing {
   }
 
   /**
-   * Render a visualizer card
+   * Render a visualizer card with staggered animation index
    */
-  private renderCard(viz: VisualizerConfig): string {
+  private renderCard(viz: VisualizerConfig, index: number): string {
     // Truncate description to ~80 chars for cleaner cards
     const shortDesc =
       viz.description.length > 80 ? viz.description.slice(0, 77) + '...' : viz.description;
 
     return `
-      <button class="landing-card" data-viz-id="${viz.id}">
+      <button class="landing-card" data-viz-id="${viz.id}" style="--card-index: ${index}">
         <div class="landing-card-header">
           <span class="landing-card-name">${viz.name}</span>
         </div>

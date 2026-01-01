@@ -22,6 +22,7 @@ import {
   InputControls,
   Landing,
 } from '../ui';
+import { iconSun, iconMoon } from '../ui/icons';
 import { StepEngine } from '../engine/step-engine';
 
 // Import visualizers to trigger registration
@@ -180,7 +181,7 @@ export class App {
   private initThemeToggle(): void {
     const THEME_KEY = 'dsv-theme';
     const toggleBtn = document.getElementById('theme-toggle');
-    const iconSpan = toggleBtn?.querySelector('.icon');
+    const iconSpan = toggleBtn?.querySelector('.theme-icon');
 
     if (!toggleBtn || !iconSpan) {
       return;
@@ -189,7 +190,7 @@ export class App {
     // Apply saved theme or default to dark
     const savedTheme = localStorage.getItem(THEME_KEY) ?? 'dark';
     document.documentElement.setAttribute('data-theme', savedTheme);
-    iconSpan.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    iconSpan.innerHTML = savedTheme === 'dark' ? iconSun({ size: 20 }) : iconMoon({ size: 20 });
 
     toggleBtn.addEventListener('click', () => {
       const currentTheme = document.documentElement.getAttribute('data-theme') ?? 'dark';
@@ -197,7 +198,7 @@ export class App {
 
       document.documentElement.setAttribute('data-theme', newTheme);
       localStorage.setItem(THEME_KEY, newTheme);
-      iconSpan.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+      iconSpan.innerHTML = newTheme === 'dark' ? iconSun({ size: 20 }) : iconMoon({ size: 20 });
     });
   }
 

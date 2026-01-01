@@ -55,7 +55,7 @@ export const MAX_ARRAY_VALUE = 100;
 // =============================================================================
 
 /** Sidebar width in pixels */
-export const SIDEBAR_WIDTH = 320;
+export const SIDEBAR_WIDTH = 450;
 
 /** Header height in pixels */
 export const HEADER_HEIGHT = 56;
