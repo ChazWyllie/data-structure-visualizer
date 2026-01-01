@@ -119,6 +119,14 @@ App Controller → StepEngine → Visualizers → Canvas Renderer
 - **Registry** (`src/core/registry.ts`): Singleton that holds all visualizers. Visualizers self-register on import.
 - **Visualizers** (`src/visualizers/*.ts`): Each implements `Visualizer<T>` interface with `getSteps()`, `draw()`, `getPseudocode()`.
 
+### Current Visualizers (21 total)
+
+| Category | Visualizers |
+|----------|-------------|
+| `sorting` | Bubble Sort, Insertion Sort, Selection Sort, Merge Sort, Quick Sort, Heap Sort |
+| `data-structure` | Stack, Queue, Linked List, Binary Search Tree, Heap, Hash Table, Union-Find, Trie, AVL Tree |
+| `graph` | Dijkstra, A*, Bellman-Ford, Prim's MST, Kruskal's MST, Topological Sort |
+
 ## Key Patterns
 
 ### Adding a New Visualizer
@@ -130,9 +138,35 @@ export function generateMyAlgoSteps(input: T[]): Step<MyData>[] { ... }
 registry.register(config, () => new MyAlgoVisualizer());
 ```
 
-2. Export the step generator function for testability
-3. Add tests in `src/__tests__/my-algo.test.ts`
-4. Import in `src/visualizers/index.ts` (triggers self-registration)
+2. **Critical**: Handle null data in `getSteps()`:
+```typescript
+getSteps(action: ActionPayload<MyData>): Step<MyData>[] {
+  const data = action.data ?? this.getInitialState().data;  // REQUIRED null safety
+  // ... rest of implementation
+}
+```
+
+3. Export step generator function for testability
+4. Add tests in `src/__tests__/my-algo.test.ts`
+5. Import in `src/visualizers/index.ts` (triggers self-registration)
+
+### Category Assignment
+
+Use only these three categories in `config.category`:
+- `'sorting'` — Sorting algorithms
+- `'data-structure'` — Data structures (stacks, trees, heaps, etc.)
+- `'graph'` — Graph algorithms (pathfinding, MST, traversals)
+
+Labels defined in `src/core/constants.ts` → `CATEGORY_LABELS`.
+
+### Graph Visualizers
+
+For graph algorithms, use shared infrastructure:
+```typescript
+import { cloneGraph, drawGraph, createRandomGraph } from './graph-shared';
+import type { GraphData } from './graph-shared';
+```
+See `src/visualizers/graph-shared.ts` for node/edge types and rendering utilities.
 
 ### Step Generator Pattern
 
@@ -142,7 +176,17 @@ Step generators are pure functions that take input and return `Step<T>[]`:
 // See: src/visualizers/stack.ts → generatePushSteps(), generatePopSteps()
 ```
 
-Each step includes: `id`, `description`, `snapshot`, `meta` (counters), `activeIndices`, `modifiedIndices`.
+Each step includes: `id`, `description`, `snapshot`, `meta` (counters).
+
+### Default Case in getSteps()
+
+Always return meaningful steps for the `default` case to avoid 0 steps on initial load:
+```typescript
+default:
+  return generateMyAlgoSteps(data);  // For algorithms
+  // OR for data structures:
+  return [{ id: 0, description: 'Ready', snapshot: { data }, meta: createStepMeta({}) }];
+```
 
 ### Event-Driven Model (v2)
 
@@ -170,7 +214,9 @@ npm run test:coverage # Tests with coverage report
 |---------|----------|
 | Type definitions | `src/core/types.ts` |
 | Shared constants | `src/core/constants.ts` |
-| Event types | `src/core/events.ts` |
+| Category labels | `src/core/constants.ts` → `CATEGORY_LABELS` |
+| Graph shared utilities | `src/visualizers/graph-shared.ts` |
+| Sorting shared utilities | `src/visualizers/sorting-shared.ts` |
 | Visualizer implementations | `src/visualizers/*.ts` |
 | Tests | `src/__tests__/*.test.ts` |
 | Feature specs | `prompts/specs/active/*.md` |
