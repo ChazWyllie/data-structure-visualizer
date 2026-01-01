@@ -349,7 +349,7 @@ class LinkedListVisualizer implements Visualizer<LinkedListData> {
   readonly config: VisualizerConfig = {
     id: 'linked-list',
     name: 'Singly Linked List',
-    category: 'linked-list',
+    category: 'data-structure',
     description:
       'A linear data structure where elements are stored in nodes, each pointing to the next node in the sequence.',
     defaultSpeed: 500,
@@ -479,7 +479,7 @@ registry.register<LinkedListData>(
   {
     id: 'linked-list',
     name: 'Singly Linked List',
-    category: 'linked-list',
+    category: 'data-structure',
     description: 'A linear data structure with nodes pointing to the next',
     defaultSpeed: 500,
   },

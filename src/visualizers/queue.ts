@@ -272,7 +272,7 @@ class QueueVisualizer implements Visualizer<QueueData> {
   readonly config: VisualizerConfig = {
     id: 'queue',
     name: 'Queue',
-    category: 'queue',
+    category: 'data-structure',
     description:
       'A First-In-First-Out (FIFO) data structure. Elements are added at the rear and removed from the front.',
     defaultSpeed: 400,
@@ -394,7 +394,7 @@ registry.register<QueueData>(
   {
     id: 'queue',
     name: 'Queue',
-    category: 'queue',
+    category: 'data-structure',
     description: 'A First-In-First-Out (FIFO) data structure',
     defaultSpeed: 400,
   },

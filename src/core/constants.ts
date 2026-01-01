@@ -96,11 +96,7 @@ export const SPEED_PRESETS = {
 
 export const CATEGORY_LABELS: Record<string, string> = {
   sorting: 'Sorting Algorithms',
-  searching: 'Searching Algorithms',
-  tree: 'Tree Structures',
+  'data-structure': 'Data Structures',
   graph: 'Graph Algorithms',
-  'linked-list': 'Linked Lists',
-  stack: 'Stacks',
-  queue: 'Queues',
   demo: 'Demos',
 } as const;

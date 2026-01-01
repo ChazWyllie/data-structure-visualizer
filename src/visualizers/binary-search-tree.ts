@@ -575,7 +575,7 @@ class BinarySearchTreeVisualizer implements Visualizer<BSTData> {
   readonly config: VisualizerConfig = {
     id: 'binary-search-tree',
     name: 'Binary Search Tree',
-    category: 'tree',
+    category: 'data-structure',
     description: 'A tree data structure with left < parent < right property',
     defaultSpeed: 600,
   };
@@ -702,7 +702,7 @@ registry.register<BSTData>(
   {
     id: 'binary-search-tree',
     name: 'Binary Search Tree',
-    category: 'tree',
+    category: 'data-structure',
     description: 'A tree data structure with left < parent < right property',
     defaultSpeed: 600,
   },

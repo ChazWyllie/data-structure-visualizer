@@ -261,7 +261,7 @@ class StackVisualizer implements Visualizer<StackData> {
   readonly config: VisualizerConfig = {
     id: 'stack',
     name: 'Stack',
-    category: 'stack',
+    category: 'data-structure',
     description:
       'A Last-In-First-Out (LIFO) data structure. Elements are added (pushed) and removed (popped) from the top only.',
     defaultSpeed: 400,
@@ -384,7 +384,7 @@ registry.register<StackData>(
   {
     id: 'stack',
     name: 'Stack',
-    category: 'stack',
+    category: 'data-structure',
     description: 'A Last-In-First-Out (LIFO) data structure',
     defaultSpeed: 400,
   },
