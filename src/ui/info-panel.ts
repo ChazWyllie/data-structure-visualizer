@@ -60,8 +60,8 @@ export class InfoPanel {
     const formattedLines = lines.map((line, index) => {
       const lineNum = index + 1;
       const isHighlighted = lineNum === highlightLine;
-      const highlightClass = isHighlighted ? ' class="highlighted"' : '';
-      return `<span${highlightClass}><span class="line-number">${lineNum}</span>${this.escapeHtml(line)}</span>`;
+      const highlightClass = isHighlighted ? 'pseudocode-line highlighted' : 'pseudocode-line';
+      return `<span class="${highlightClass}"><span class="line-number">${lineNum}</span>${this.escapeHtml(line)}</span>`;
     });
 
     this.pseudocodeEl.innerHTML = `<code>${formattedLines.join('\n')}</code>`;
@@ -71,7 +71,7 @@ export class InfoPanel {
    * Highlight a specific line in the pseudocode
    */
   highlightLine(lineNumber: number): void {
-    const lines = this.pseudocodeEl.querySelectorAll('span');
+    const lines = this.pseudocodeEl.querySelectorAll('.pseudocode-line');
     lines.forEach((line, index) => {
       if (index + 1 === lineNumber) {
         line.classList.add('highlighted');
