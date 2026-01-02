@@ -14,6 +14,7 @@ import type {
   ElementState,
   InputField,
   ActionButton,
+  CodeSnippets,
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
@@ -277,13 +278,53 @@ class BubbleSortVisualizer implements Visualizer<BubbleSortData> {
 
   getPseudocode(): string[] {
     return [
-      'function bubbleSort(arr):',
-      '  for i = 0 to n-1:',
-      '    for j = 0 to n-i-1:',
-      '      if arr[j] > arr[j+1]:',
-      '        swap(arr[j], arr[j+1])',
-      '  return arr',
+      'for (let i = 0; i < n - 1; i++) {',
+      '  for (let j = 0; j < n - i - 1; j++) {',
+      '    if (arr[j] > arr[j + 1]) {',
+      '      [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];',
+      '    }',
+      '  }',
+      '}',
     ];
+  }
+
+  getCode(): CodeSnippets {
+    return {
+      typescript: [
+        'function bubbleSort(arr: number[]): void {',
+        '  const n = arr.length;',
+        '  for (let i = 0; i < n - 1; i++) {',
+        '    for (let j = 0; j < n - i - 1; j++) {',
+        '      if (arr[j] > arr[j + 1]) {',
+        '        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];',
+        '      }',
+        '    }',
+        '  }',
+        '}',
+      ],
+      python: [
+        'def bubble_sort(arr: list[int]) -> None:',
+        '    n = len(arr)',
+        '    for i in range(n - 1):',
+        '        for j in range(n - i - 1):',
+        '            if arr[j] > arr[j + 1]:',
+        '                arr[j], arr[j + 1] = arr[j + 1], arr[j]',
+      ],
+      java: [
+        'void bubbleSort(int[] arr) {',
+        '    int n = arr.length;',
+        '    for (int i = 0; i < n - 1; i++) {',
+        '        for (int j = 0; j < n - i - 1; j++) {',
+        '            if (arr[j] > arr[j + 1]) {',
+        '                int temp = arr[j];',
+        '                arr[j] = arr[j + 1];',
+        '                arr[j + 1] = temp;',
+        '            }',
+        '        }',
+        '    }',
+        '}',
+      ],
+    };
   }
 
   getComplexity(): ComplexityInfo {
@@ -328,7 +369,8 @@ registry.register<BubbleSortData>(
     id: 'bubble-sort',
     name: 'Bubble Sort',
     category: 'sorting',
-    description: 'A simple comparison-based sorting algorithm',
+    description:
+      'A simple comparison-based algorithm that repeatedly swaps adjacent elements if they are in the wrong order.',
     defaultSpeed: 300,
   },
   () => new BubbleSortVisualizer()

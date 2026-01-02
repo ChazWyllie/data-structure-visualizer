@@ -12,6 +12,7 @@ import type {
   ElementState,
   InputField,
   ActionButton,
+  CodeSnippets,
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
@@ -168,13 +169,56 @@ class InsertionSortVisualizer implements Visualizer<SortingData> {
 
   getPseudocode(): string[] {
     return [
-      'function insertionSort(arr):',
-      '  for i = 1 to n:',
-      '    key = arr[i], j = i-1',
-      '    while j >= 0 and arr[j] > key:',
-      '      arr[j+1] = arr[j], j--',
-      '    arr[j+1] = key',
+      'for (let i = 1; i < n; i++) {',
+      '  let key = arr[i], j = i - 1;',
+      '  while (j >= 0 && arr[j] > key) {',
+      '    arr[j + 1] = arr[j];',
+      '    j--;',
+      '  }',
+      '  arr[j + 1] = key;',
+      '}',
     ];
+  }
+
+  getCode(): CodeSnippets {
+    return {
+      typescript: [
+        'function insertionSort(arr: number[]): void {',
+        '  for (let i = 1; i < arr.length; i++) {',
+        '    const key = arr[i];',
+        '    let j = i - 1;',
+        '    while (j >= 0 && arr[j] > key) {',
+        '      arr[j + 1] = arr[j];',
+        '      j--;',
+        '    }',
+        '    arr[j + 1] = key;',
+        '  }',
+        '}',
+      ],
+      python: [
+        'def insertion_sort(arr: list[int]) -> None:',
+        '    for i in range(1, len(arr)):',
+        '        key = arr[i]',
+        '        j = i - 1',
+        '        while j >= 0 and arr[j] > key:',
+        '            arr[j + 1] = arr[j]',
+        '            j -= 1',
+        '        arr[j + 1] = key',
+      ],
+      java: [
+        'void insertionSort(int[] arr) {',
+        '    for (int i = 1; i < arr.length; i++) {',
+        '        int key = arr[i];',
+        '        int j = i - 1;',
+        '        while (j >= 0 && arr[j] > key) {',
+        '            arr[j + 1] = arr[j];',
+        '            j--;',
+        '        }',
+        '        arr[j + 1] = key;',
+        '    }',
+        '}',
+      ],
+    };
   }
 
   getComplexity(): ComplexityInfo {
@@ -208,7 +252,8 @@ registry.register<SortingData>(
     id: 'insertion-sort',
     name: 'Insertion Sort',
     category: 'sorting',
-    description: 'Insertion sort algorithm',
+    description:
+      'Builds a sorted array one element at a time by inserting each element into its correct position.',
     defaultSpeed: 300,
   },
   () => new InsertionSortVisualizer()

@@ -26,6 +26,8 @@ export interface StepMeta {
   writes: number;
   /** Line number in pseudocode to highlight (1-based) */
   highlightedLine?: number;
+  /** Color for pseudocode highlight (matches visualization state) */
+  highlightColor?: string;
   /** Time complexity at this step (for display) */
   complexity?: string;
 }
@@ -105,6 +107,16 @@ export interface InputField {
   placeholder?: string;
 }
 
+/** Supported code languages */
+export type CodeLanguage = 'typescript' | 'python' | 'java';
+
+/** Code snippets for multiple languages */
+export interface CodeSnippets {
+  typescript: string[];
+  python: string[];
+  java: string[];
+}
+
 /** Action button definition */
 export interface ActionButton {
   /** Unique identifier */
@@ -134,6 +146,9 @@ export interface Visualizer<T = unknown> {
 
   /** Get pseudocode lines for display */
   getPseudocode(): string[];
+
+  /** Get code snippets in multiple languages (optional, defaults to pseudocode) */
+  getCode?(): CodeSnippets;
 
   /** Get time complexity info */
   getComplexity(): ComplexityInfo;

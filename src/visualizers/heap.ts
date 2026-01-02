@@ -12,6 +12,7 @@ import type {
   ComplexityInfo,
   InputField,
   ActionButton,
+  CodeSnippets,
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
@@ -708,20 +709,80 @@ class HeapVisualizer implements Visualizer<HeapData> {
 
   getPseudocode(): string[] {
     return [
-      'function push(value):',
-      '  add value at end of array',
-      '  while parent < current (max) or parent > current (min):',
-      '    swap with parent',
-      '  heap property satisfied',
-      '  return',
-      '',
-      'function pop():',
-      '  save root value',
-      '  move last element to root',
-      '  while current violates heap property:',
-      '    swap with larger (max) or smaller (min) child',
-      '  return saved value',
+      'push(value: T): void {',
+      '  this.heap.push(value);',
+      '  let i = this.heap.length - 1;',
+      '  while (i > 0 && this.compare(this.heap[i], this.heap[parent(i)])) {',
+      '    [this.heap[i], this.heap[parent(i)]] = [this.heap[parent(i)], this.heap[i]];',
+      '    i = parent(i);',
+      '  }',
+      '}',
     ];
+  }
+
+  getCode(): CodeSnippets {
+    return {
+      typescript: [
+        'class MinHeap<T> {',
+        '  private heap: T[] = [];',
+        '',
+        '  push(value: T): void {',
+        '    this.heap.push(value);',
+        '    this.bubbleUp(this.heap.length - 1);',
+        '  }',
+        '',
+        '  pop(): T | undefined {',
+        '    if (this.heap.length === 0) return undefined;',
+        '    const min = this.heap[0];',
+        '    const last = this.heap.pop()!;',
+        '    if (this.heap.length > 0) {',
+        '      this.heap[0] = last;',
+        '      this.bubbleDown(0);',
+        '    }',
+        '    return min;',
+        '  }',
+        '}',
+      ],
+      python: [
+        'import heapq',
+        '',
+        'class MinHeap:',
+        '    def __init__(self):',
+        '        self.heap = []',
+        '',
+        '    def push(self, value):',
+        '        heapq.heappush(self.heap, value)',
+        '',
+        '    def pop(self):',
+        '        if not self.heap:',
+        '            return None',
+        '        return heapq.heappop(self.heap)',
+        '',
+        '    def peek(self):',
+        '        return self.heap[0] if self.heap else None',
+      ],
+      java: [
+        'class MinHeap<T extends Comparable<T>> {',
+        '    private List<T> heap = new ArrayList<>();',
+        '',
+        '    public void push(T value) {',
+        '        heap.add(value);',
+        '        bubbleUp(heap.size() - 1);',
+        '    }',
+        '',
+        '    public T pop() {',
+        '        if (heap.isEmpty()) return null;',
+        '        T min = heap.get(0);',
+        '        T last = heap.remove(heap.size() - 1);',
+        '        if (!heap.isEmpty()) {',
+        '            heap.set(0, last);',
+        '            bubbleDown(0);',
+        '        }',
+        '        return min;',
+        '    }',
+        '}',
+      ],
+    };
   }
 
   getComplexity(): ComplexityInfo {

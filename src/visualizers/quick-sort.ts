@@ -12,6 +12,7 @@ import type {
   ElementState,
   InputField,
   ActionButton,
+  CodeSnippets,
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
@@ -246,14 +247,85 @@ class QuickSortVisualizer implements Visualizer<SortingData> {
 
   getPseudocode(): string[] {
     return [
-      'function quickSort(arr, low, high):',
-      '  if low < high:',
-      '    pivot = arr[high]',
-      '    partition around pivot',
-      '    pi = partition index',
-      '    quickSort(arr, low, pi-1)',
-      '    quickSort(arr, pi+1, high)',
+      'function quickSort(arr: T[], low: number, high: number): void {',
+      '  if (low < high) {',
+      '    const pivot = arr[high];',
+      '    const pi = partition(arr, low, high);',
+      '    quickSort(arr, low, pi - 1);',
+      '    quickSort(arr, pi + 1, high);',
+      '  }',
+      '}',
     ];
+  }
+
+  getCode(): CodeSnippets {
+    return {
+      typescript: [
+        'function quickSort(arr: number[], low: number, high: number): void {',
+        '  if (low < high) {',
+        '    const pi = partition(arr, low, high);',
+        '    quickSort(arr, low, pi - 1);',
+        '    quickSort(arr, pi + 1, high);',
+        '  }',
+        '}',
+        '',
+        'function partition(arr: number[], low: number, high: number): number {',
+        '  const pivot = arr[high];',
+        '  let i = low - 1;',
+        '  for (let j = low; j < high; j++) {',
+        '    if (arr[j] < pivot) {',
+        '      i++;',
+        '      [arr[i], arr[j]] = [arr[j], arr[i]];',
+        '    }',
+        '  }',
+        '  [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];',
+        '  return i + 1;',
+        '}',
+      ],
+      python: [
+        'def quick_sort(arr: list[int], low: int, high: int) -> None:',
+        '    if low < high:',
+        '        pi = partition(arr, low, high)',
+        '        quick_sort(arr, low, pi - 1)',
+        '        quick_sort(arr, pi + 1, high)',
+        '',
+        'def partition(arr: list[int], low: int, high: int) -> int:',
+        '    pivot = arr[high]',
+        '    i = low - 1',
+        '    for j in range(low, high):',
+        '        if arr[j] < pivot:',
+        '            i += 1',
+        '            arr[i], arr[j] = arr[j], arr[i]',
+        '    arr[i + 1], arr[high] = arr[high], arr[i + 1]',
+        '    return i + 1',
+      ],
+      java: [
+        'void quickSort(int[] arr, int low, int high) {',
+        '    if (low < high) {',
+        '        int pi = partition(arr, low, high);',
+        '        quickSort(arr, low, pi - 1);',
+        '        quickSort(arr, pi + 1, high);',
+        '    }',
+        '}',
+        '',
+        'int partition(int[] arr, int low, int high) {',
+        '    int pivot = arr[high];',
+        '    int i = low - 1;',
+        '    for (int j = low; j < high; j++) {',
+        '        if (arr[j] < pivot) {',
+        '            i++;',
+        '            int temp = arr[i];',
+        '            arr[i] = arr[j];',
+        '            arr[j] = temp;',
+        '        }',
+        '    }',
+        '    int temp = arr[i + 1];',
+        '    arr[i + 1] = arr[high];',
+        '    arr[high] = temp;',
+        '    return i + 1;',
+        '}',
+      ],
+    };
   }
 
   getComplexity(): ComplexityInfo {
@@ -290,7 +362,8 @@ registry.register<SortingData>(
     id: 'quick-sort',
     name: 'Quick Sort',
     category: 'sorting',
-    description: 'Quick sort algorithm',
+    description:
+      'A divide-and-conquer algorithm that selects a pivot and partitions elements around it.',
     defaultSpeed: 200,
   },
   () => new QuickSortVisualizer()

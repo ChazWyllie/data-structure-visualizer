@@ -13,6 +13,7 @@ import type {
   LinkedListNode,
   InputField,
   ActionButton,
+  CodeSnippets,
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
@@ -431,14 +432,75 @@ class LinkedListVisualizer implements Visualizer<LinkedListData> {
 
   getPseudocode(): string[] {
     return [
-      'function insertAtTail(value):',
-      '  node = new Node(value)',
-      '  if head == null: head = node; return',
-      '  current = head',
-      '  while current.next != null:',
-      '    current = current.next',
-      '  current.next = node',
+      'insertAtTail(value: T): void {',
+      '  const node = new Node(value);',
+      '  if (!this.head) { this.head = node; return; }',
+      '  let current = this.head;',
+      '  while (current.next) current = current.next;',
+      '  current.next = node;',
+      '}',
     ];
+  }
+
+  getCode(): CodeSnippets {
+    return {
+      typescript: [
+        'class ListNode<T> {',
+        '  constructor(public value: T, public next: ListNode<T> | null = null) {}',
+        '}',
+        '',
+        'class LinkedList<T> {',
+        '  private head: ListNode<T> | null = null;',
+        '',
+        '  insertAtTail(value: T): void {',
+        '    const node = new ListNode(value);',
+        '    if (!this.head) { this.head = node; return; }',
+        '    let current = this.head;',
+        '    while (current.next) current = current.next;',
+        '    current.next = node;',
+        '  }',
+        '}',
+      ],
+      python: [
+        'class ListNode:',
+        '    def __init__(self, value, next=None):',
+        '        self.value = value',
+        '        self.next = next',
+        '',
+        'class LinkedList:',
+        '    def __init__(self):',
+        '        self.head = None',
+        '',
+        '    def insert_at_tail(self, value):',
+        '        node = ListNode(value)',
+        '        if not self.head:',
+        '            self.head = node',
+        '            return',
+        '        current = self.head',
+        '        while current.next:',
+        '            current = current.next',
+        '        current.next = node',
+      ],
+      java: [
+        'class ListNode<T> {',
+        '    T value;',
+        '    ListNode<T> next;',
+        '    ListNode(T value) { this.value = value; }',
+        '}',
+        '',
+        'class LinkedList<T> {',
+        '    private ListNode<T> head;',
+        '',
+        '    public void insertAtTail(T value) {',
+        '        ListNode<T> node = new ListNode<>(value);',
+        '        if (head == null) { head = node; return; }',
+        '        ListNode<T> current = head;',
+        '        while (current.next != null) current = current.next;',
+        '        current.next = node;',
+        '    }',
+        '}',
+      ],
+    };
   }
 
   getComplexity(): ComplexityInfo {
@@ -480,7 +542,8 @@ registry.register<LinkedListData>(
     id: 'linked-list',
     name: 'Singly Linked List',
     category: 'data-structure',
-    description: 'A linear data structure with nodes pointing to the next',
+    description:
+      'A linear collection of nodes where each node points to the next, enabling dynamic insertion and deletion.',
     defaultSpeed: 500,
   },
   () => new LinkedListVisualizer()

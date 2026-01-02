@@ -12,6 +12,7 @@ import type {
   ElementState,
   InputField,
   ActionButton,
+  CodeSnippets,
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
@@ -227,14 +228,82 @@ class MergeSortVisualizer implements Visualizer<SortingData> {
 
   getPseudocode(): string[] {
     return [
-      'function mergeSort(arr, l, r):',
-      '  if l < r:',
-      '    mid = (l + r) / 2',
-      '    mergeSort(arr, l, mid)',
-      '    mergeSort(arr, mid+1, r)',
-      '    merge(arr, l, mid, r)',
-      '  return arr',
+      'function mergeSort(arr: T[], l: number, r: number): T[] {',
+      '  if (l < r) {',
+      '    const mid = Math.floor((l + r) / 2);',
+      '    mergeSort(arr, l, mid);',
+      '    mergeSort(arr, mid + 1, r);',
+      '    merge(arr, l, mid, r);',
+      '  }',
+      '  return arr;',
+      '}',
     ];
+  }
+
+  getCode(): CodeSnippets {
+    return {
+      typescript: [
+        'function mergeSort(arr: number[]): number[] {',
+        '  if (arr.length <= 1) return arr;',
+        '  const mid = Math.floor(arr.length / 2);',
+        '  const left = mergeSort(arr.slice(0, mid));',
+        '  const right = mergeSort(arr.slice(mid));',
+        '  return merge(left, right);',
+        '}',
+        '',
+        'function merge(left: number[], right: number[]): number[] {',
+        '  const result: number[] = [];',
+        '  let i = 0, j = 0;',
+        '  while (i < left.length && j < right.length) {',
+        '    if (left[i] <= right[j]) result.push(left[i++]);',
+        '    else result.push(right[j++]);',
+        '  }',
+        '  return [...result, ...left.slice(i), ...right.slice(j)];',
+        '}',
+      ],
+      python: [
+        'def merge_sort(arr: list[int]) -> list[int]:',
+        '    if len(arr) <= 1:',
+        '        return arr',
+        '    mid = len(arr) // 2',
+        '    left = merge_sort(arr[:mid])',
+        '    right = merge_sort(arr[mid:])',
+        '    return merge(left, right)',
+        '',
+        'def merge(left: list[int], right: list[int]) -> list[int]:',
+        '    result = []',
+        '    i = j = 0',
+        '    while i < len(left) and j < len(right):',
+        '        if left[i] <= right[j]:',
+        '            result.append(left[i])',
+        '            i += 1',
+        '        else:',
+        '            result.append(right[j])',
+        '            j += 1',
+        '    return result + left[i:] + right[j:]',
+      ],
+      java: [
+        'void mergeSort(int[] arr, int l, int r) {',
+        '    if (l < r) {',
+        '        int mid = l + (r - l) / 2;',
+        '        mergeSort(arr, l, mid);',
+        '        mergeSort(arr, mid + 1, r);',
+        '        merge(arr, l, mid, r);',
+        '    }',
+        '}',
+        '',
+        'void merge(int[] arr, int l, int m, int r) {',
+        '    int[] left = Arrays.copyOfRange(arr, l, m + 1);',
+        '    int[] right = Arrays.copyOfRange(arr, m + 1, r + 1);',
+        '    int i = 0, j = 0, k = l;',
+        '    while (i < left.length && j < right.length) {',
+        '        arr[k++] = left[i] <= right[j] ? left[i++] : right[j++];',
+        '    }',
+        '    while (i < left.length) arr[k++] = left[i++];',
+        '    while (j < right.length) arr[k++] = right[j++];',
+        '}',
+      ],
+    };
   }
 
   getComplexity(): ComplexityInfo {
@@ -271,7 +340,8 @@ registry.register<SortingData>(
     id: 'merge-sort',
     name: 'Merge Sort',
     category: 'sorting',
-    description: 'Merge sort algorithm',
+    description:
+      'A divide-and-conquer algorithm that recursively splits the array, sorts each half, then merges them.',
     defaultSpeed: 200,
   },
   () => new MergeSortVisualizer()

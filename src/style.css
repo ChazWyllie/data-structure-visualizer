@@ -90,7 +90,7 @@
 
   /* === Layout (set dynamically) === */
   --header-height: 56px;
-  --sidebar-width: 450px;
+  --sidebar-width: 520px;
   --controls-height: 64px;
 }
 
@@ -526,6 +526,49 @@ body {
 }
 
 /* =============================================================================
+   Code Header & Language Tabs
+   ============================================================================= */
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-sm);
+}
+
+.code-header .panel-title {
+  margin-bottom: 0;
+}
+
+.code-tabs {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.code-tab {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.code-tab:hover {
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.code-tab.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--bg-primary);
+}
+
+/* =============================================================================
    Pseudocode Block (V2 Style)
    ============================================================================= */
 
@@ -553,8 +596,13 @@ body {
 }
 
 .pseudocode-block span.highlighted {
-  background: linear-gradient(90deg, rgba(96, 165, 250, 0.15), rgba(168, 85, 247, 0.1));
-  border-left: 3px solid var(--accent-primary);
+  --highlight-color: var(--accent-primary);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--highlight-color) 20%, transparent),
+    transparent
+  );
+  border-left: 3px solid var(--highlight-color);
   margin-left: -3px;
 }
 
@@ -714,13 +762,13 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  background: var(--text-primary);
   border-color: transparent;
-  color: white;
+  color: var(--bg-primary);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, var(--accent-primary-hover), var(--accent-secondary));
+  background: var(--text-secondary);
   border-color: transparent;
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);

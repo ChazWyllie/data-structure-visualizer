@@ -12,6 +12,7 @@ import type {
   ElementState,
   InputField,
   ActionButton,
+  CodeSnippets,
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
@@ -227,16 +228,80 @@ class HeapSortVisualizer implements Visualizer<SortingData> {
 
   getPseudocode(): string[] {
     return [
-      'function heapSort(arr):',
-      '  buildMaxHeap(arr)',
-      '  for i = n-1 to 1:',
-      '    swap(arr[0], arr[i])',
-      '    heapify(arr, i, 0)',
-      '',
-      'function heapify(arr, n, i):',
-      '  largest = max(i, left, right)',
-      '  if largest != i: swap & recurse',
+      'function heapSort(arr: T[]): void {',
+      '  buildMaxHeap(arr);',
+      '  for (let i = n - 1; i > 0; i--) {',
+      '    [arr[0], arr[i]] = [arr[i], arr[0]];',
+      '    heapify(arr, i, 0);',
+      '  }',
+      '}',
     ];
+  }
+
+  getCode(): CodeSnippets {
+    return {
+      typescript: [
+        'function heapSort(arr: number[]): void {',
+        '  const n = arr.length;',
+        '  for (let i = Math.floor(n / 2) - 1; i >= 0; i--) heapify(arr, n, i);',
+        '  for (let i = n - 1; i > 0; i--) {',
+        '    [arr[0], arr[i]] = [arr[i], arr[0]];',
+        '    heapify(arr, i, 0);',
+        '  }',
+        '}',
+        '',
+        'function heapify(arr: number[], n: number, i: number): void {',
+        '  let largest = i;',
+        '  const left = 2 * i + 1, right = 2 * i + 2;',
+        '  if (left < n && arr[left] > arr[largest]) largest = left;',
+        '  if (right < n && arr[right] > arr[largest]) largest = right;',
+        '  if (largest !== i) {',
+        '    [arr[i], arr[largest]] = [arr[largest], arr[i]];',
+        '    heapify(arr, n, largest);',
+        '  }',
+        '}',
+      ],
+      python: [
+        'def heap_sort(arr: list[int]) -> None:',
+        '    n = len(arr)',
+        '    for i in range(n // 2 - 1, -1, -1):',
+        '        heapify(arr, n, i)',
+        '    for i in range(n - 1, 0, -1):',
+        '        arr[0], arr[i] = arr[i], arr[0]',
+        '        heapify(arr, i, 0)',
+        '',
+        'def heapify(arr: list[int], n: int, i: int) -> None:',
+        '    largest = i',
+        '    left, right = 2 * i + 1, 2 * i + 2',
+        '    if left < n and arr[left] > arr[largest]:',
+        '        largest = left',
+        '    if right < n and arr[right] > arr[largest]:',
+        '        largest = right',
+        '    if largest != i:',
+        '        arr[i], arr[largest] = arr[largest], arr[i]',
+        '        heapify(arr, n, largest)',
+      ],
+      java: [
+        'void heapSort(int[] arr) {',
+        '    int n = arr.length;',
+        '    for (int i = n / 2 - 1; i >= 0; i--) heapify(arr, n, i);',
+        '    for (int i = n - 1; i > 0; i--) {',
+        '        int temp = arr[0]; arr[0] = arr[i]; arr[i] = temp;',
+        '        heapify(arr, i, 0);',
+        '    }',
+        '}',
+        '',
+        'void heapify(int[] arr, int n, int i) {',
+        '    int largest = i, left = 2*i + 1, right = 2*i + 2;',
+        '    if (left < n && arr[left] > arr[largest]) largest = left;',
+        '    if (right < n && arr[right] > arr[largest]) largest = right;',
+        '    if (largest != i) {',
+        '        int temp = arr[i]; arr[i] = arr[largest]; arr[largest] = temp;',
+        '        heapify(arr, n, largest);',
+        '    }',
+        '}',
+      ],
+    };
   }
 
   getComplexity(): ComplexityInfo {
@@ -273,7 +338,8 @@ registry.register<SortingData>(
     id: 'heap-sort',
     name: 'Heap Sort',
     category: 'sorting',
-    description: 'Heap sort algorithm',
+    description:
+      'Builds a max heap from the array and repeatedly extracts the maximum element to sort.',
     defaultSpeed: 200,
   },
   () => new HeapSortVisualizer()

@@ -13,6 +13,7 @@ import type {
   QueueElement,
   InputField,
   ActionButton,
+  CodeSnippets,
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
@@ -345,15 +346,82 @@ class QueueVisualizer implements Visualizer<QueueData> {
 
   getPseudocode(): string[] {
     return [
-      'function enqueue(value):',
-      '  if size == maxSize: throw "Full"',
-      '  queue[rear++] = value',
-      '  return success',
+      'enqueue(value: T): void {',
+      '  if (this.size === maxSize) throw new Error("Full");',
+      '  this.items[this.rear++] = value;',
+      '}',
       '',
-      'function dequeue():',
-      '  if size == 0: throw "Empty"',
-      '  return queue[front++]',
+      'dequeue(): T {',
+      '  if (this.size === 0) throw new Error("Empty");',
+      '  return this.items[this.front++];',
+      '}',
     ];
+  }
+
+  getCode(): CodeSnippets {
+    return {
+      typescript: [
+        'class Queue<T> {',
+        '  private items: T[] = [];',
+        '',
+        '  enqueue(value: T): void {',
+        '    this.items.push(value);',
+        '  }',
+        '',
+        '  dequeue(): T | undefined {',
+        '    return this.items.shift();',
+        '  }',
+        '',
+        '  peek(): T | undefined {',
+        '    return this.items[0];',
+        '  }',
+        '',
+        '  isEmpty(): boolean {',
+        '    return this.items.length === 0;',
+        '  }',
+        '}',
+      ],
+      python: [
+        'from collections import deque',
+        '',
+        'class Queue:',
+        '    def __init__(self):',
+        '        self.items = deque()',
+        '',
+        '    def enqueue(self, value):',
+        '        self.items.append(value)',
+        '',
+        '    def dequeue(self):',
+        '        if self.is_empty():',
+        '            raise IndexError("Queue empty")',
+        '        return self.items.popleft()',
+        '',
+        '    def is_empty(self):',
+        '        return len(self.items) == 0',
+      ],
+      java: [
+        'class Queue<T> {',
+        '    private LinkedList<T> items = new LinkedList<>();',
+        '',
+        '    public void enqueue(T value) {',
+        '        items.addLast(value);',
+        '    }',
+        '',
+        '    public T dequeue() {',
+        '        if (isEmpty()) throw new NoSuchElementException();',
+        '        return items.removeFirst();',
+        '    }',
+        '',
+        '    public T peek() {',
+        '        return items.peekFirst();',
+        '    }',
+        '',
+        '    public boolean isEmpty() {',
+        '        return items.isEmpty();',
+        '    }',
+        '}',
+      ],
+    };
   }
 
   getComplexity(): ComplexityInfo {
@@ -395,7 +463,8 @@ registry.register<QueueData>(
     id: 'queue',
     name: 'Queue',
     category: 'data-structure',
-    description: 'A First-In-First-Out (FIFO) data structure',
+    description:
+      'A First-In-First-Out (FIFO) data structure supporting enqueue at rear and dequeue at front.',
     defaultSpeed: 400,
   },
   () => new QueueVisualizer()

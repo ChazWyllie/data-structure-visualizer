@@ -78,7 +78,15 @@ export function createLayout(): HTMLElement {
         </div>
 
         <div class="panel-section panel-card">
-          <h3 class="panel-title">Pseudocode</h3>
+          <div class="code-header">
+            <h3 class="panel-title">Code</h3>
+            <div class="code-tabs" id="code-tabs">
+              <button class="code-tab active" data-lang="pseudo">Pseudo</button>
+              <button class="code-tab" data-lang="typescript">TS</button>
+              <button class="code-tab" data-lang="python">Python</button>
+              <button class="code-tab" data-lang="java">Java</button>
+            </div>
+          </div>
           <pre class="pseudocode-block" id="pseudocode-block"><code>// Select a visualizer</code></pre>
         </div>
 

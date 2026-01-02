@@ -13,6 +13,7 @@ import type {
   StackElement,
   InputField,
   ActionButton,
+  CodeSnippets,
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
@@ -335,15 +336,84 @@ class StackVisualizer implements Visualizer<StackData> {
 
   getPseudocode(): string[] {
     return [
-      'function push(value):',
-      '  if size == maxSize: throw "Overflow"',
-      '  stack[top++] = value',
-      '  return success',
+      'push(value: T): void {',
+      '  if (this.size === maxSize) throw new Error("Overflow");',
+      '  this.items[this.top++] = value;',
+      '}',
       '',
-      'function pop():',
-      '  if size == 0: throw "Underflow"',
-      '  return stack[--top]',
+      'pop(): T {',
+      '  if (this.size === 0) throw new Error("Underflow");',
+      '  return this.items[--this.top];',
+      '}',
     ];
+  }
+
+  getCode(): CodeSnippets {
+    return {
+      typescript: [
+        'class Stack<T> {',
+        '  private items: T[] = [];',
+        '',
+        '  push(value: T): void {',
+        '    this.items.push(value);',
+        '  }',
+        '',
+        '  pop(): T | undefined {',
+        '    return this.items.pop();',
+        '  }',
+        '',
+        '  peek(): T | undefined {',
+        '    return this.items[this.items.length - 1];',
+        '  }',
+        '',
+        '  isEmpty(): boolean {',
+        '    return this.items.length === 0;',
+        '  }',
+        '}',
+      ],
+      python: [
+        'class Stack:',
+        '    def __init__(self):',
+        '        self.items = []',
+        '',
+        '    def push(self, value):',
+        '        self.items.append(value)',
+        '',
+        '    def pop(self):',
+        '        if self.is_empty():',
+        '            raise IndexError("Stack underflow")',
+        '        return self.items.pop()',
+        '',
+        '    def peek(self):',
+        '        return self.items[-1] if self.items else None',
+        '',
+        '    def is_empty(self):',
+        '        return len(self.items) == 0',
+      ],
+      java: [
+        'class Stack<T> {',
+        '    private List<T> items = new ArrayList<>();',
+        '',
+        '    public void push(T value) {',
+        '        items.add(value);',
+        '    }',
+        '',
+        '    public T pop() {',
+        '        if (isEmpty()) throw new EmptyStackException();',
+        '        return items.remove(items.size() - 1);',
+        '    }',
+        '',
+        '    public T peek() {',
+        '        if (isEmpty()) return null;',
+        '        return items.get(items.size() - 1);',
+        '    }',
+        '',
+        '    public boolean isEmpty() {',
+        '        return items.isEmpty();',
+        '    }',
+        '}',
+      ],
+    };
   }
 
   getComplexity(): ComplexityInfo {
@@ -385,7 +455,8 @@ registry.register<StackData>(
     id: 'stack',
     name: 'Stack',
     category: 'data-structure',
-    description: 'A Last-In-First-Out (LIFO) data structure',
+    description:
+      'A Last-In-First-Out (LIFO) data structure supporting push and pop operations at the top.',
     defaultSpeed: 400,
   },
   () => new StackVisualizer()

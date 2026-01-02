@@ -3,8 +3,17 @@
  * Updates the sidebar with visualizer info, pseudocode, complexity, and counters
  */
 
-import type { ComplexityInfo, OperationCounters, Step } from '../core/types';
+import type {
+  CodeLanguage,
+  CodeSnippets,
+  ComplexityInfo,
+  OperationCounters,
+  Step,
+} from '../core/types';
 import { getElement } from './layout';
+
+/** Available code display modes */
+type CodeMode = 'pseudo' | CodeLanguage;
 
 /**
  * Info Panel Manager
@@ -12,6 +21,7 @@ import { getElement } from './layout';
 export class InfoPanel {
   private descriptionEl: HTMLElement;
   private pseudocodeEl: HTMLElement;
+  private codeTabsEl: HTMLElement;
   private stepDescriptionEl: HTMLElement;
   private stepCurrentEl: HTMLElement;
   private stepTotalEl: HTMLElement;
@@ -28,9 +38,17 @@ export class InfoPanel {
   private readsEl: HTMLElement;
   private writesEl: HTMLElement;
 
+  // Code state
+  private currentMode: CodeMode = 'pseudo';
+  private currentPseudocode: string[] = [];
+  private currentCodeSnippets: CodeSnippets | null = null;
+  private currentHighlightLine?: number;
+  private currentHighlightColor?: string;
+
   constructor() {
     this.descriptionEl = getElement('visualizer-description');
     this.pseudocodeEl = getElement('pseudocode-block');
+    this.codeTabsEl = getElement('code-tabs');
     this.stepDescriptionEl = getElement('step-description');
     this.stepCurrentEl = getElement('step-current');
     this.stepTotalEl = getElement('step-total');
@@ -44,6 +62,75 @@ export class InfoPanel {
     this.swapsEl = getElement('counter-swaps');
     this.readsEl = getElement('counter-reads');
     this.writesEl = getElement('counter-writes');
+
+    this.setupTabListeners();
+  }
+
+  /**
+   * Set up click listeners for language tabs
+   */
+  private setupTabListeners(): void {
+    this.codeTabsEl.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (target.classList.contains('code-tab')) {
+        const lang = target.dataset.lang as CodeMode;
+        if (lang) {
+          this.setCodeMode(lang);
+        }
+      }
+    });
+  }
+
+  /**
+   * Switch between code display modes
+   */
+  private setCodeMode(mode: CodeMode): void {
+    this.currentMode = mode;
+
+    // Update active tab
+    const tabs = this.codeTabsEl.querySelectorAll('.code-tab');
+    tabs.forEach((tab) => {
+      const tabEl = tab as HTMLElement;
+      tabEl.classList.toggle('active', tabEl.dataset.lang === mode);
+    });
+
+    // Render appropriate code
+    this.renderCode();
+  }
+
+  /**
+   * Render code based on current mode
+   */
+  private renderCode(): void {
+    let lines: string[];
+
+    if (this.currentMode === 'pseudo') {
+      lines = this.currentPseudocode;
+    } else if (this.currentCodeSnippets) {
+      lines = this.currentCodeSnippets[this.currentMode];
+    } else {
+      // Fallback to pseudocode if no code snippets available
+      lines = this.currentPseudocode;
+    }
+
+    this.renderCodeLines(lines);
+
+    // Re-apply highlight if set
+    if (this.currentHighlightLine !== undefined) {
+      this.highlightLine(this.currentHighlightLine, this.currentHighlightColor);
+    }
+  }
+
+  /**
+   * Render code lines to the pseudocode element
+   */
+  private renderCodeLines(lines: string[]): void {
+    const formattedLines = lines.map((line, index) => {
+      const lineNum = index + 1;
+      return `<span class="pseudocode-line"><span class="line-number">${lineNum}</span>${this.escapeHtml(line)}</span>`;
+    });
+
+    this.pseudocodeEl.innerHTML = `<code>${formattedLines.join('\n')}</code>`;
   }
 
   /**
@@ -54,29 +141,41 @@ export class InfoPanel {
   }
 
   /**
-   * Set the pseudocode content
+   * Set the pseudocode content and optional code snippets
    */
-  setPseudocode(lines: string[], highlightLine?: number): void {
-    const formattedLines = lines.map((line, index) => {
-      const lineNum = index + 1;
-      const isHighlighted = lineNum === highlightLine;
-      const highlightClass = isHighlighted ? 'pseudocode-line highlighted' : 'pseudocode-line';
-      return `<span class="${highlightClass}"><span class="line-number">${lineNum}</span>${this.escapeHtml(line)}</span>`;
-    });
+  setPseudocode(lines: string[], highlightLine?: number, codeSnippets?: CodeSnippets | null): void {
+    this.currentPseudocode = lines;
+    this.currentCodeSnippets = codeSnippets ?? null;
+    this.currentHighlightLine = highlightLine;
+    this.currentHighlightColor = undefined;
 
-    this.pseudocodeEl.innerHTML = `<code>${formattedLines.join('\n')}</code>`;
+    this.renderCode();
+
+    if (highlightLine !== undefined) {
+      this.highlightLine(highlightLine);
+    }
   }
 
   /**
-   * Highlight a specific line in the pseudocode
+   * Highlight a specific line in the pseudocode with optional color
    */
-  highlightLine(lineNumber: number): void {
+  highlightLine(lineNumber: number, highlightColor?: string): void {
+    this.currentHighlightLine = lineNumber;
+    this.currentHighlightColor = highlightColor;
+
     const lines = this.pseudocodeEl.querySelectorAll('.pseudocode-line');
     lines.forEach((line, index) => {
+      const htmlLine = line as HTMLElement;
       if (index + 1 === lineNumber) {
-        line.classList.add('highlighted');
+        htmlLine.classList.add('highlighted');
+        if (highlightColor) {
+          htmlLine.style.setProperty('--highlight-color', highlightColor);
+        } else {
+          htmlLine.style.removeProperty('--highlight-color');
+        }
       } else {
-        line.classList.remove('highlighted');
+        htmlLine.classList.remove('highlighted');
+        htmlLine.style.removeProperty('--highlight-color');
       }
     });
   }
@@ -125,7 +224,7 @@ export class InfoPanel {
     if (step) {
       this.stepDescriptionEl.textContent = step.description;
       if (step.meta?.highlightedLine !== undefined) {
-        this.highlightLine(step.meta.highlightedLine);
+        this.highlightLine(step.meta.highlightedLine, step.meta.highlightColor);
       }
     } else {
       this.stepDescriptionEl.textContent = 'Click Play to start the visualization';

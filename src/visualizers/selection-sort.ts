@@ -12,6 +12,7 @@ import type {
   ElementState,
   InputField,
   ActionButton,
+  CodeSnippets,
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
@@ -173,13 +174,55 @@ class SelectionSortVisualizer implements Visualizer<SortingData> {
 
   getPseudocode(): string[] {
     return [
-      'function selectionSort(arr):',
-      '  for i = 0 to n-1:',
-      '    minIdx = i',
-      '    for j = i+1 to n:',
-      '      if arr[j] < arr[minIdx]: minIdx = j',
-      '    swap(arr[i], arr[minIdx])',
+      'for (let i = 0; i < n - 1; i++) {',
+      '  let minIdx = i;',
+      '  for (let j = i + 1; j < n; j++) {',
+      '    if (arr[j] < arr[minIdx]) minIdx = j;',
+      '  }',
+      '  [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];',
+      '}',
     ];
+  }
+
+  getCode(): CodeSnippets {
+    return {
+      typescript: [
+        'function selectionSort(arr: number[]): void {',
+        '  const n = arr.length;',
+        '  for (let i = 0; i < n - 1; i++) {',
+        '    let minIdx = i;',
+        '    for (let j = i + 1; j < n; j++) {',
+        '      if (arr[j] < arr[minIdx]) minIdx = j;',
+        '    }',
+        '    [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];',
+        '  }',
+        '}',
+      ],
+      python: [
+        'def selection_sort(arr: list[int]) -> None:',
+        '    n = len(arr)',
+        '    for i in range(n - 1):',
+        '        min_idx = i',
+        '        for j in range(i + 1, n):',
+        '            if arr[j] < arr[min_idx]:',
+        '                min_idx = j',
+        '        arr[i], arr[min_idx] = arr[min_idx], arr[i]',
+      ],
+      java: [
+        'void selectionSort(int[] arr) {',
+        '    int n = arr.length;',
+        '    for (int i = 0; i < n - 1; i++) {',
+        '        int minIdx = i;',
+        '        for (int j = i + 1; j < n; j++) {',
+        '            if (arr[j] < arr[minIdx]) minIdx = j;',
+        '        }',
+        '        int temp = arr[i];',
+        '        arr[i] = arr[minIdx];',
+        '        arr[minIdx] = temp;',
+        '    }',
+        '}',
+      ],
+    };
   }
 
   getComplexity(): ComplexityInfo {
@@ -213,7 +256,8 @@ registry.register<SortingData>(
     id: 'selection-sort',
     name: 'Selection Sort',
     category: 'sorting',
-    description: 'Selection sort algorithm',
+    description:
+      'Finds the minimum element and swaps it to the front, building a sorted portion left to right.',
     defaultSpeed: 300,
   },
   () => new SelectionSortVisualizer()

@@ -307,7 +307,8 @@ export class App {
     this.infoPanel.setDescription(visualizer.config.description);
 
     if (visualizer.getPseudocode) {
-      this.infoPanel.setPseudocode(visualizer.getPseudocode());
+      const codeSnippets = visualizer.getCode?.() ?? null;
+      this.infoPanel.setPseudocode(visualizer.getPseudocode(), undefined, codeSnippets);
     }
 
     if (visualizer.getComplexity) {
