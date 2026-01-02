@@ -21,6 +21,11 @@ import {
   InfoPanel,
   InputControls,
   Landing,
+  ShowcaseDirectory,
+  LandingV1Minimal,
+  LandingV2Showcase,
+  LandingV3Immersive,
+  type LandingPageComponent,
 } from '../ui';
 import { iconSun, iconMoon } from '../ui/icons';
 import { StepEngine } from '../engine/step-engine';
@@ -43,6 +48,8 @@ export class App {
   private inputControls!: InputControls;
   private stepEngine: StepEngine;
   private landing!: Landing;
+  private showcase!: ShowcaseDirectory;
+  private currentLandingPage: LandingPageComponent | null = null;
   private isLandingMode = true;
 
   // State
@@ -97,8 +104,9 @@ export class App {
     // Subscribe to step engine events
     this.setupStepEngineListeners();
 
-    // Initialize landing page
+    // Initialize landing page and showcase
     this.initLanding();
+    this.initShowcase();
 
     // Handle canvas resize
     this.canvasManager.onResize(() => {
@@ -144,6 +152,17 @@ export class App {
     this.landing = new Landing(landingRoot, (id) => {
       // When user clicks a landing card, navigate via hash
       window.location.hash = `viz=${id}`;
+    });
+  }
+
+  /**
+   * Initialize showcase directory
+   */
+  private initShowcase(): void {
+    const showcaseRoot = getElement('showcase-root');
+    this.showcase = new ShowcaseDirectory(showcaseRoot, (landingId) => {
+      // When user clicks a showcase card, navigate to landing preview
+      window.location.hash = landingId;
     });
   }
 
@@ -510,6 +529,47 @@ export class App {
   }
 
   /**
+   * Show the entry page (V2 Showcase as primary landing, called from main.ts)
+   */
+  showEntry(): void {
+    // Pause and reset engine
+    this.stepEngine.pause();
+    this.stepEngine.reset();
+
+    // Clear current visualizer
+    if (this.currentVisualizer?.dispose) {
+      this.currentVisualizer.dispose();
+    }
+    this.currentVisualizer = null;
+
+    // Unmount other views
+    this.landing.unmount();
+    this.showcase.unmount();
+    this.unmountCurrentLandingPage();
+    this.isLandingMode = false;
+
+    // Set app mode to landing (hides canvas/controls)
+    const app = document.getElementById('app');
+    if (app) {
+      app.setAttribute('data-mode', 'landing');
+    }
+    this.controls.setEnabled(false);
+
+    // Create V2 Showcase in entry mode (no back button)
+    const lpRoot = getElement('lp-root');
+    this.currentLandingPage = new LandingV2Showcase(
+      lpRoot,
+      () => {
+        window.location.hash = 'home';
+      },
+      true
+    ); // isEntryMode = true
+
+    this.currentLandingPage.mount();
+    console.log('Showing entry page (V2 Showcase)');
+  }
+
+  /**
    * Show the landing page (public, called from main.ts)
    */
   showLanding(): void {
@@ -548,9 +608,106 @@ export class App {
 
     // Switch to landing mode
     this.setLandingMode(true);
+    this.showcase.unmount();
+    this.unmountCurrentLandingPage();
     this.landing.mount();
 
     console.log('Showing landing page');
+  }
+
+  /**
+   * Show the showcase directory (public, called from main.ts)
+   */
+  showShowcase(): void {
+    // Pause and reset engine
+    this.stepEngine.pause();
+    this.stepEngine.reset();
+
+    // Clear current visualizer
+    if (this.currentVisualizer?.dispose) {
+      this.currentVisualizer.dispose();
+    }
+    this.currentVisualizer = null;
+
+    // Unmount other views
+    this.landing.unmount();
+    this.unmountCurrentLandingPage();
+    this.isLandingMode = false;
+
+    // Set app mode to landing (hides canvas/controls)
+    const app = document.getElementById('app');
+    if (app) {
+      app.setAttribute('data-mode', 'landing');
+    }
+    this.controls.setEnabled(false);
+
+    // Mount showcase
+    this.showcase.mount();
+
+    console.log('Showing showcase directory');
+  }
+
+  /**
+   * Show a landing page preview (public, called from main.ts)
+   */
+  showLandingPreview(landingId: string): void {
+    // Pause and reset engine
+    this.stepEngine.pause();
+    this.stepEngine.reset();
+
+    // Clear current visualizer
+    if (this.currentVisualizer?.dispose) {
+      this.currentVisualizer.dispose();
+    }
+    this.currentVisualizer = null;
+
+    // Unmount other views
+    this.landing.unmount();
+    this.showcase.unmount();
+    this.unmountCurrentLandingPage();
+    this.isLandingMode = false;
+
+    // Set app mode to landing (hides canvas/controls)
+    const app = document.getElementById('app');
+    if (app) {
+      app.setAttribute('data-mode', 'landing');
+    }
+    this.controls.setEnabled(false);
+
+    // Create and mount the appropriate landing page
+    const lpRoot = getElement('lp-root');
+    const backHandler = () => {
+      window.location.hash = 'showcase';
+    };
+
+    switch (landingId) {
+      case 'landing-v1':
+        this.currentLandingPage = new LandingV1Minimal(lpRoot, backHandler);
+        break;
+      case 'landing-v2':
+        this.currentLandingPage = new LandingV2Showcase(lpRoot, backHandler);
+        break;
+      case 'landing-v3':
+        this.currentLandingPage = new LandingV3Immersive(lpRoot, backHandler);
+        break;
+      default:
+        console.warn(`Unknown landing page: ${landingId}`);
+        window.location.hash = 'showcase';
+        return;
+    }
+
+    this.currentLandingPage.mount();
+    console.log(`Showing landing page preview: ${landingId}`);
+  }
+
+  /**
+   * Unmount the current landing page preview if any
+   */
+  private unmountCurrentLandingPage(): void {
+    if (this.currentLandingPage) {
+      this.currentLandingPage.unmount();
+      this.currentLandingPage = null;
+    }
   }
 
   /**
@@ -563,8 +720,10 @@ export class App {
       return false;
     }
 
-    // Switch out of landing mode
+    // Switch out of all overlay modes
     this.landing.unmount();
+    this.showcase.unmount();
+    this.unmountCurrentLandingPage();
     this.setLandingMode(false);
 
     // Update selector UI (but don't trigger its callback)
