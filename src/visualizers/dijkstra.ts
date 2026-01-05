@@ -21,7 +21,7 @@ import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
 import { CANVAS_PADDING } from '../core/constants';
 import type { GraphData, GraphNode, GraphEdge } from './graph-shared';
-import { cloneGraph, drawGraph, NODE_STATE_COLORS } from './graph-shared';
+import { cloneGraph, drawGraph, NODE_STATE_COLORS, EDGE_STATE_COLORS } from './graph-shared';
 
 // =============================================================================
 // Types
@@ -246,7 +246,7 @@ export function generateDijkstraSteps(
         sourceNode: sourceId,
       },
     },
-    meta: createStepMeta({ highlightedLine: 0 }),
+    meta: createStepMeta({ highlightedLine: 0, highlightColor: NODE_STATE_COLORS.current }),
   });
 
   const distStr = Array.from(distances.entries())
@@ -266,7 +266,7 @@ export function generateDijkstraSteps(
         sourceNode: sourceId,
       },
     },
-    meta: createStepMeta({ highlightedLine: 1 }),
+    meta: createStepMeta({ highlightedLine: 1, highlightColor: NODE_STATE_COLORS.current }),
   });
 
   // Initialize priority queue
@@ -286,7 +286,7 @@ export function generateDijkstraSteps(
         sourceNode: sourceId,
       },
     },
-    meta: createStepMeta({ highlightedLine: 2 }),
+    meta: createStepMeta({ highlightedLine: 2, highlightColor: NODE_STATE_COLORS.current }),
   });
 
   // Build adjacency list for efficient neighbor lookup
@@ -344,7 +344,11 @@ export function generateDijkstraSteps(
           sourceNode: sourceId,
         },
       },
-      meta: createStepMeta({ highlightedLine: 3, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 3,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.current,
+      }),
     });
 
     // Explore neighbors
@@ -384,7 +388,11 @@ export function generateDijkstraSteps(
             sourceNode: sourceId,
           },
         },
-        meta: createStepMeta({ highlightedLine: 4, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 4,
+          comparisons,
+          highlightColor: EDGE_STATE_COLORS.considering,
+        }),
       });
 
       if (newDist < oldDist) {
@@ -409,7 +417,11 @@ export function generateDijkstraSteps(
               sourceNode: sourceId,
             },
           },
-          meta: createStepMeta({ highlightedLine: 5, comparisons }),
+          meta: createStepMeta({
+            highlightedLine: 5,
+            comparisons,
+            highlightColor: NODE_STATE_COLORS.inMST,
+          }),
         });
       } else {
         if (edgeRef) {
@@ -437,7 +449,11 @@ export function generateDijkstraSteps(
         sourceNode: sourceId,
       },
     },
-    meta: createStepMeta({ highlightedLine: 6, comparisons }),
+    meta: createStepMeta({
+      highlightedLine: 6,
+      comparisons,
+      highlightColor: NODE_STATE_COLORS.inMST,
+    }),
   });
 
   return steps;
@@ -556,7 +572,7 @@ class DijkstraVisualizer implements Visualizer<DijkstraData> {
                 sourceNode: 'A',
               },
             },
-            meta: createStepMeta({}),
+            meta: createStepMeta({ highlightColor: NODE_STATE_COLORS.default }),
           },
         ];
       }

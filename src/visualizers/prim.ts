@@ -149,7 +149,7 @@ export function generatePrimSteps(graph: GraphData, startNodeId?: string): Step<
         priorityQueue: [],
       },
     },
-    meta: createStepMeta({ highlightedLine: 0 }),
+    meta: createStepMeta({ highlightedLine: 0, highlightColor: NODE_STATE_COLORS.current }),
   });
 
   // Mark start node as visited
@@ -184,7 +184,7 @@ export function generatePrimSteps(graph: GraphData, startNodeId?: string): Step<
         priorityQueue: heap.map((h) => ({ edgeId: h.edgeId, weight: h.weight })),
       },
     },
-    meta: createStepMeta({ highlightedLine: 1 }),
+    meta: createStepMeta({ highlightedLine: 1, highlightColor: EDGE_STATE_COLORS.considering }),
   });
 
   // Main loop: while heap is not empty and MST is incomplete
@@ -220,7 +220,11 @@ export function generatePrimSteps(graph: GraphData, startNodeId?: string): Step<
             priorityQueue: heap.map((h) => ({ edgeId: h.edgeId, weight: h.weight })),
           },
         },
-        meta: createStepMeta({ highlightedLine: 3, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 3,
+          comparisons,
+          highlightColor: EDGE_STATE_COLORS.rejected,
+        }),
       });
 
       // Reset edge state
@@ -254,7 +258,11 @@ export function generatePrimSteps(graph: GraphData, startNodeId?: string): Step<
           priorityQueue: heap.map((h) => ({ edgeId: h.edgeId, weight: h.weight })),
         },
       },
-      meta: createStepMeta({ highlightedLine: 4, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 4,
+        comparisons,
+        highlightColor: EDGE_STATE_COLORS.considering,
+      }),
     });
 
     // Add edge to MST
@@ -301,7 +309,11 @@ export function generatePrimSteps(graph: GraphData, startNodeId?: string): Step<
           priorityQueue: heap.map((h) => ({ edgeId: h.edgeId, weight: h.weight })),
         },
       },
-      meta: createStepMeta({ highlightedLine: 5, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 5,
+        comparisons,
+        highlightColor: EDGE_STATE_COLORS.inMST,
+      }),
     });
   }
 
@@ -329,7 +341,11 @@ export function generatePrimSteps(graph: GraphData, startNodeId?: string): Step<
         priorityQueue: [],
       },
     },
-    meta: createStepMeta({ highlightedLine: 6, comparisons }),
+    meta: createStepMeta({
+      highlightedLine: 6,
+      comparisons,
+      highlightColor: NODE_STATE_COLORS.inMST,
+    }),
   });
 
   return steps;
@@ -436,7 +452,7 @@ class PrimVisualizer implements Visualizer<PrimData> {
                 priorityQueue: [],
               },
             },
-            meta: createStepMeta({}),
+            meta: createStepMeta({ highlightColor: NODE_STATE_COLORS.default }),
           },
         ];
       }

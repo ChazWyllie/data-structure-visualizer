@@ -16,7 +16,7 @@ import type {
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
-import { CANVAS_PADDING } from '../core/constants';
+import { CANVAS_PADDING, CANVAS_BACKGROUND_COLOR } from '../core/constants';
 
 // =============================================================================
 // Types
@@ -144,7 +144,7 @@ export function generateInsertSteps(trie: TrieData, word: string): Step<TrieData
         currentWord: word,
       },
     },
-    meta: createStepMeta({ highlightedLine: 0 }),
+    meta: createStepMeta({ highlightedLine: 0, highlightColor: NODE_STATE_COLORS.default }),
   });
 
   let current = workingTrie.root;
@@ -159,7 +159,7 @@ export function generateInsertSteps(trie: TrieData, word: string): Step<TrieData
         currentWord: word,
       },
     },
-    meta: createStepMeta({ highlightedLine: 1 }),
+    meta: createStepMeta({ highlightedLine: 1, highlightColor: NODE_STATE_COLORS.current }),
   });
 
   for (let i = 0; i < word.length; i++) {
@@ -190,7 +190,11 @@ export function generateInsertSteps(trie: TrieData, word: string): Step<TrieData
           currentWord: word,
         },
       },
-      meta: createStepMeta({ highlightedLine: isNew ? 3 : 2, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: isNew ? 3 : 2,
+        comparisons,
+        highlightColor: isNew ? NODE_STATE_COLORS.inserted : NODE_STATE_COLORS.current,
+      }),
     });
 
     current = child;
@@ -215,7 +219,11 @@ export function generateInsertSteps(trie: TrieData, word: string): Step<TrieData
         currentWord: word,
       },
     },
-    meta: createStepMeta({ highlightedLine: 4, comparisons }),
+    meta: createStepMeta({
+      highlightedLine: 4,
+      comparisons,
+      highlightColor: NODE_STATE_COLORS.inserted,
+    }),
   });
 
   return steps;
@@ -239,7 +247,7 @@ export function generateSearchSteps(trie: TrieData, word: string): Step<TrieData
         currentWord: word,
       },
     },
-    meta: createStepMeta({ highlightedLine: 0 }),
+    meta: createStepMeta({ highlightedLine: 0, highlightColor: NODE_STATE_COLORS.default }),
   });
 
   let current = workingTrie.root;
@@ -254,7 +262,7 @@ export function generateSearchSteps(trie: TrieData, word: string): Step<TrieData
         currentWord: word,
       },
     },
-    meta: createStepMeta({ highlightedLine: 1 }),
+    meta: createStepMeta({ highlightedLine: 1, highlightColor: NODE_STATE_COLORS.current }),
   });
 
   for (let i = 0; i < word.length; i++) {
@@ -278,7 +286,11 @@ export function generateSearchSteps(trie: TrieData, word: string): Step<TrieData
             currentWord: word,
           },
         },
-        meta: createStepMeta({ highlightedLine: 5, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 5,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.notFound,
+        }),
       });
 
       return steps;
@@ -295,7 +307,11 @@ export function generateSearchSteps(trie: TrieData, word: string): Step<TrieData
           currentWord: word,
         },
       },
-      meta: createStepMeta({ highlightedLine: 2, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 2,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.current,
+      }),
     });
 
     current = child;
@@ -314,7 +330,11 @@ export function generateSearchSteps(trie: TrieData, word: string): Step<TrieData
           currentWord: word,
         },
       },
-      meta: createStepMeta({ highlightedLine: 3, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 3,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.found,
+      }),
     });
   } else {
     current.state = 'notFound';
@@ -328,7 +348,11 @@ export function generateSearchSteps(trie: TrieData, word: string): Step<TrieData
           currentWord: word,
         },
       },
-      meta: createStepMeta({ highlightedLine: 4, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 4,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.notFound,
+      }),
     });
   }
 
@@ -354,7 +378,7 @@ export function generatePrefixSteps(trie: TrieData, prefix: string): Step<TrieDa
         matchingWords: [],
       },
     },
-    meta: createStepMeta({ highlightedLine: 0 }),
+    meta: createStepMeta({ highlightedLine: 0, highlightColor: NODE_STATE_COLORS.default }),
   });
 
   let current = workingTrie.root;
@@ -379,7 +403,11 @@ export function generatePrefixSteps(trie: TrieData, prefix: string): Step<TrieDa
             matchingWords: [],
           },
         },
-        meta: createStepMeta({ highlightedLine: 4, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 4,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.notFound,
+        }),
       });
 
       return steps;
@@ -396,7 +424,11 @@ export function generatePrefixSteps(trie: TrieData, prefix: string): Step<TrieDa
           currentWord: prefix,
         },
       },
-      meta: createStepMeta({ highlightedLine: 1, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 1,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.current,
+      }),
     });
 
     current = child;
@@ -429,7 +461,11 @@ export function generatePrefixSteps(trie: TrieData, prefix: string): Step<TrieDa
         matchingWords,
       },
     },
-    meta: createStepMeta({ highlightedLine: 3, comparisons }),
+    meta: createStepMeta({
+      highlightedLine: 3,
+      comparisons,
+      highlightColor: NODE_STATE_COLORS.found,
+    }),
   });
 
   return steps;
@@ -532,7 +568,7 @@ function drawTrie(
   width: number,
   height: number
 ): void {
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   // Title
@@ -650,7 +686,7 @@ class TrieVisualizer implements Visualizer<TrieData> {
             id: 0,
             description: 'Reset to sample trie',
             snapshot: { data: createSampleTrie() },
-            meta: createStepMeta({}),
+            meta: createStepMeta({ highlightColor: NODE_STATE_COLORS.default }),
           },
         ];
       default:

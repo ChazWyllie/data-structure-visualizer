@@ -17,7 +17,7 @@ import type {
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
-import { CANVAS_PADDING } from '../core/constants';
+import { CANVAS_PADDING, CANVAS_BACKGROUND_COLOR } from '../core/constants';
 
 // =============================================================================
 // Types
@@ -69,7 +69,7 @@ export function generatePushSteps(
     id: stepId++,
     description: `Preparing to push ${value} onto the stack`,
     snapshot: { data: { elements: initialElements, maxSize } },
-    meta: createStepMeta({ writes, highlightedLine: 1 }),
+    meta: createStepMeta({ writes, highlightedLine: 1, highlightColor: STATE_COLORS.default }),
   });
 
   if (stack.length >= maxSize) {
@@ -77,7 +77,7 @@ export function generatePushSteps(
       id: stepId++,
       description: `Stack overflow! Cannot push ${value} - stack is full`,
       snapshot: { data: { elements: initialElements, maxSize } },
-      meta: createStepMeta({ writes, highlightedLine: 2 }),
+      meta: createStepMeta({ writes, highlightedLine: 2, highlightColor: STATE_COLORS.popping }),
     });
     return steps;
   }
@@ -93,7 +93,7 @@ export function generatePushSteps(
     id: stepId++,
     description: `Pushing ${value} onto the stack`,
     snapshot: { data: { elements: pushingElements, maxSize } },
-    meta: createStepMeta({ writes, highlightedLine: 3 }),
+    meta: createStepMeta({ writes, highlightedLine: 3, highlightColor: STATE_COLORS.pushing }),
   });
 
   // Final state
@@ -106,7 +106,7 @@ export function generatePushSteps(
     id: stepId++,
     description: `Successfully pushed ${value}. Stack size: ${finalElements.length}`,
     snapshot: { data: { elements: finalElements, maxSize } },
-    meta: createStepMeta({ writes, highlightedLine: 4 }),
+    meta: createStepMeta({ writes, highlightedLine: 4, highlightColor: STATE_COLORS.top }),
   });
 
   return steps;
@@ -125,7 +125,7 @@ export function generatePopSteps(
       id: stepId++,
       description: 'Stack underflow! Cannot pop - stack is empty',
       snapshot: { data: { elements: [], maxSize } },
-      meta: createStepMeta({ reads, highlightedLine: 1 }),
+      meta: createStepMeta({ reads, highlightedLine: 1, highlightColor: STATE_COLORS.popping }),
     });
     return steps;
   }
@@ -140,7 +140,7 @@ export function generatePopSteps(
     id: stepId++,
     description: `Preparing to pop from stack (top value: ${stack[stack.length - 1].value})`,
     snapshot: { data: { elements: initialElements, maxSize } },
-    meta: createStepMeta({ reads, highlightedLine: 1 }),
+    meta: createStepMeta({ reads, highlightedLine: 1, highlightColor: STATE_COLORS.top }),
   });
 
   // Popping animation
@@ -155,7 +155,7 @@ export function generatePopSteps(
     id: stepId++,
     description: `Popping ${poppedValue} from the stack`,
     snapshot: { data: { elements: poppingElements, maxSize } },
-    meta: createStepMeta({ reads, highlightedLine: 2 }),
+    meta: createStepMeta({ reads, highlightedLine: 2, highlightColor: STATE_COLORS.popping }),
   });
 
   // Final state
@@ -169,7 +169,7 @@ export function generatePopSteps(
     id: stepId++,
     description: `Popped ${poppedValue}. Stack size: ${finalElements.length}`,
     snapshot: { data: { elements: finalElements, maxSize } },
-    meta: createStepMeta({ reads, highlightedLine: 3 }),
+    meta: createStepMeta({ reads, highlightedLine: 3, highlightColor: STATE_COLORS.top }),
   });
 
   return steps;
@@ -186,7 +186,7 @@ function drawStack(
   width: number,
   height: number
 ): void {
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   const centerX = width / 2;

@@ -17,7 +17,7 @@ import type {
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
 import type { SortingData } from './sorting-shared';
-import { drawArrayBars, generateRandomArray } from './sorting-shared';
+import { drawArrayBars, generateRandomArray, STATE_COLORS } from './sorting-shared';
 
 interface MergeStep {
   elements: { value: number; state: ElementState }[];
@@ -25,6 +25,7 @@ interface MergeStep {
   comparisons: number;
   writes: number;
   line: number;
+  color: string;
   activeIndices?: number[];
   modifiedIndices?: number[];
 }
@@ -41,6 +42,7 @@ export function generateMergeSortSteps(arr: number[]): Step<SortingData>[] {
     comparisons: 0,
     writes: 0,
     line: 1,
+    color: STATE_COLORS.default,
   });
 
   function merge(left: number, mid: number, right: number): void {
@@ -62,6 +64,7 @@ export function generateMergeSortSteps(arr: number[]): Step<SortingData>[] {
       comparisons,
       writes,
       line: 4,
+      color: STATE_COLORS.active,
     });
 
     let i = 0,
@@ -93,6 +96,7 @@ export function generateMergeSortSteps(arr: number[]): Step<SortingData>[] {
         comparisons,
         writes,
         line: 5,
+        color: STATE_COLORS.swapping,
         modifiedIndices: [k],
       });
       k++;
@@ -108,6 +112,7 @@ export function generateMergeSortSteps(arr: number[]): Step<SortingData>[] {
         comparisons,
         writes,
         line: 6,
+        color: STATE_COLORS.sorted,
         modifiedIndices: [k],
       });
       i++;
@@ -124,6 +129,7 @@ export function generateMergeSortSteps(arr: number[]): Step<SortingData>[] {
         comparisons,
         writes,
         line: 6,
+        color: STATE_COLORS.sorted,
         modifiedIndices: [k],
       });
       j++;
@@ -145,6 +151,7 @@ export function generateMergeSortSteps(arr: number[]): Step<SortingData>[] {
         comparisons,
         writes,
         line: 2,
+        color: STATE_COLORS.comparing,
       });
 
       mergeSort(left, mid);
@@ -163,6 +170,7 @@ export function generateMergeSortSteps(arr: number[]): Step<SortingData>[] {
     comparisons,
     writes,
     line: 7,
+    color: STATE_COLORS.sorted,
   });
 
   return mergeSteps.map((step, idx) => ({
@@ -171,8 +179,10 @@ export function generateMergeSortSteps(arr: number[]): Step<SortingData>[] {
     snapshot: { data: { elements: step.elements } },
     meta: createStepMeta({
       comparisons: step.comparisons,
-      writes: step.writes,
+      reads: step.comparisons * 2,
+      writes: step.writes * 2,
       highlightedLine: step.line,
+      highlightColor: step.color,
     }),
     activeIndices: step.activeIndices,
     modifiedIndices: step.modifiedIndices,
@@ -210,7 +220,7 @@ class MergeSortVisualizer implements Visualizer<SortingData> {
           id: 0,
           description: 'Generated new random array',
           snapshot: { data: this.currentData },
-          meta: createStepMeta({ highlightedLine: 1 }),
+          meta: createStepMeta({ highlightedLine: 1, reads: 0, writes: 0 }),
         },
       ];
     }

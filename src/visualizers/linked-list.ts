@@ -17,7 +17,7 @@ import type {
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
-import { CANVAS_PADDING } from '../core/constants';
+import { CANVAS_PADDING, CANVAS_BACKGROUND_COLOR } from '../core/constants';
 
 // =============================================================================
 // Types
@@ -71,7 +71,12 @@ export function generateInsertAtTailSteps(
     id: stepId++,
     description: `Preparing to insert ${value} at the tail`,
     snapshot: { data: { nodes: nodes.map((n) => ({ ...n, state: 'default' as NodeState })) } },
-    meta: createStepMeta({ reads, writes, highlightedLine: 1 }),
+    meta: createStepMeta({
+      reads,
+      writes,
+      highlightedLine: 1,
+      highlightColor: STATE_COLORS.default,
+    }),
   });
 
   if (nodes.length === 0) {
@@ -87,14 +92,24 @@ export function generateInsertAtTailSteps(
       id: stepId++,
       description: `List is empty. Creating new head node with value ${value}`,
       snapshot: { data: { nodes: [newNode] } },
-      meta: createStepMeta({ reads, writes, highlightedLine: 2 }),
+      meta: createStepMeta({
+        reads,
+        writes,
+        highlightedLine: 2,
+        highlightColor: STATE_COLORS.inserting,
+      }),
     });
 
     steps.push({
       id: stepId++,
       description: `Successfully inserted ${value} as head`,
       snapshot: { data: { nodes: [{ ...newNode, state: 'default' as NodeState }] } },
-      meta: createStepMeta({ reads, writes, highlightedLine: 3 }),
+      meta: createStepMeta({
+        reads,
+        writes,
+        highlightedLine: 3,
+        highlightColor: STATE_COLORS.found,
+      }),
     });
 
     return steps;
@@ -115,7 +130,12 @@ export function generateInsertAtTailSteps(
           ? `Found tail node (value: ${nodes[i].value})`
           : `Traversing: visiting node ${i} (value: ${nodes[i].value})`,
       snapshot: { data: { nodes: traverseNodes } },
-      meta: createStepMeta({ reads, writes, highlightedLine: 4 }),
+      meta: createStepMeta({
+        reads,
+        writes,
+        highlightedLine: 4,
+        highlightColor: STATE_COLORS.current,
+      }),
       activeIndices: [i],
     });
   }
@@ -134,7 +154,12 @@ export function generateInsertAtTailSteps(
     id: stepId++,
     description: `Inserting new node with value ${value} after tail`,
     snapshot: { data: { nodes: insertingNodes } },
-    meta: createStepMeta({ reads, writes, highlightedLine: 5 }),
+    meta: createStepMeta({
+      reads,
+      writes,
+      highlightedLine: 5,
+      highlightColor: STATE_COLORS.inserting,
+    }),
   });
 
   // Final state
@@ -143,7 +168,7 @@ export function generateInsertAtTailSteps(
     id: stepId++,
     description: `Successfully inserted ${value}. List length: ${finalNodes.length}`,
     snapshot: { data: { nodes: finalNodes } },
-    meta: createStepMeta({ reads, writes, highlightedLine: 6 }),
+    meta: createStepMeta({ reads, writes, highlightedLine: 6, highlightColor: STATE_COLORS.found }),
   });
 
   return steps;
@@ -163,7 +188,12 @@ export function generateDeleteByValueSteps(
     id: stepId++,
     description: `Searching for node with value ${value} to delete`,
     snapshot: { data: { nodes: nodes.map((n) => ({ ...n, state: 'default' as NodeState })) } },
-    meta: createStepMeta({ reads, writes, highlightedLine: 1 }),
+    meta: createStepMeta({
+      reads,
+      writes,
+      highlightedLine: 1,
+      highlightColor: STATE_COLORS.default,
+    }),
   });
 
   if (nodes.length === 0) {
@@ -171,7 +201,12 @@ export function generateDeleteByValueSteps(
       id: stepId++,
       description: 'List is empty. Nothing to delete.',
       snapshot: { data: { nodes: [] } },
-      meta: createStepMeta({ reads, writes, highlightedLine: 2 }),
+      meta: createStepMeta({
+        reads,
+        writes,
+        highlightedLine: 2,
+        highlightColor: STATE_COLORS.deleting,
+      }),
     });
     return steps;
   }
@@ -192,7 +227,12 @@ export function generateDeleteByValueSteps(
         ? `Found ${value} at position ${i}!`
         : `Checking node ${i}: ${nodes[i].value} !== ${value}`,
       snapshot: { data: { nodes: searchNodes } },
-      meta: createStepMeta({ reads, writes, highlightedLine: 3 }),
+      meta: createStepMeta({
+        reads,
+        writes,
+        highlightedLine: 3,
+        highlightColor: isMatch ? STATE_COLORS.found : STATE_COLORS.current,
+      }),
       activeIndices: [i],
     });
 
@@ -207,7 +247,12 @@ export function generateDeleteByValueSteps(
       id: stepId++,
       description: `Value ${value} not found in the list`,
       snapshot: { data: { nodes: nodes.map((n) => ({ ...n, state: 'default' as NodeState })) } },
-      meta: createStepMeta({ reads, writes, highlightedLine: 4 }),
+      meta: createStepMeta({
+        reads,
+        writes,
+        highlightedLine: 4,
+        highlightColor: STATE_COLORS.deleting,
+      }),
     });
     return steps;
   }
@@ -223,7 +268,12 @@ export function generateDeleteByValueSteps(
     id: stepId++,
     description: `Deleting node with value ${value}`,
     snapshot: { data: { nodes: deletingNodes } },
-    meta: createStepMeta({ reads, writes, highlightedLine: 5 }),
+    meta: createStepMeta({
+      reads,
+      writes,
+      highlightedLine: 5,
+      highlightColor: STATE_COLORS.deleting,
+    }),
   });
 
   // Final state - remove the node
@@ -235,7 +285,7 @@ export function generateDeleteByValueSteps(
     id: stepId++,
     description: `Successfully deleted ${value}. List length: ${remainingNodes.length}`,
     snapshot: { data: { nodes: remainingNodes } },
-    meta: createStepMeta({ reads, writes, highlightedLine: 6 }),
+    meta: createStepMeta({ reads, writes, highlightedLine: 6, highlightColor: STATE_COLORS.found }),
   });
 
   return steps;
@@ -251,7 +301,7 @@ function drawLinkedList(
   width: number,
   height: number
 ): void {
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   const centerY = height / 2;

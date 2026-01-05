@@ -16,7 +16,7 @@ import type {
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
-import { CANVAS_PADDING } from '../core/constants';
+import { CANVAS_PADDING, CANVAS_BACKGROUND_COLOR } from '../core/constants';
 
 // =============================================================================
 // Types
@@ -97,7 +97,7 @@ export function generatePushSteps(
     id: stepId++,
     description: `Pushing value ${value} into ${heapType}-heap`,
     snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-    meta: createStepMeta({ comparisons, highlightedLine: 1 }),
+    meta: createStepMeta({ comparisons, highlightedLine: 1, highlightColor: STATE_COLORS.default }),
   });
 
   // Add element at end
@@ -108,7 +108,11 @@ export function generatePushSteps(
     id: stepId++,
     description: `Added ${value} at index ${currentIndex} (end of array)`,
     snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-    meta: createStepMeta({ comparisons, highlightedLine: 2 }),
+    meta: createStepMeta({
+      comparisons,
+      highlightedLine: 2,
+      highlightColor: STATE_COLORS.inserted,
+    }),
   });
 
   // Bubble up (heapify up)
@@ -125,7 +129,11 @@ export function generatePushSteps(
       id: stepId++,
       description: `Comparing ${heap[currentIndex].value} with parent ${heap[parentIndex].value}`,
       snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-      meta: createStepMeta({ comparisons, highlightedLine: 3 }),
+      meta: createStepMeta({
+        comparisons,
+        highlightedLine: 3,
+        highlightColor: STATE_COLORS.comparing,
+      }),
       activeIndices: [currentIndex, parentIndex],
     });
 
@@ -139,7 +147,12 @@ export function generatePushSteps(
         id: stepId++,
         description: `${heap[currentIndex].value} is ${heapWord} than ${heap[parentIndex].value}, swapping`,
         snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-        meta: createStepMeta({ comparisons, swaps, highlightedLine: 4 }),
+        meta: createStepMeta({
+          comparisons,
+          swaps,
+          highlightedLine: 4,
+          highlightColor: STATE_COLORS.swapping,
+        }),
         modifiedIndices: [currentIndex, parentIndex],
       });
 
@@ -162,7 +175,12 @@ export function generatePushSteps(
         id: stepId++,
         description: `Heap property satisfied. ${heap[currentIndex].value} is in correct position.`,
         snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-        meta: createStepMeta({ comparisons, swaps, highlightedLine: 5 }),
+        meta: createStepMeta({
+          comparisons,
+          swaps,
+          highlightedLine: 5,
+          highlightColor: STATE_COLORS.inserted,
+        }),
       });
       break;
     }
@@ -182,7 +200,12 @@ export function generatePushSteps(
     id: stepId++,
     description: `Push complete. ${value} is now in the heap.`,
     snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-    meta: createStepMeta({ comparisons, swaps, highlightedLine: 6 }),
+    meta: createStepMeta({
+      comparisons,
+      swaps,
+      highlightedLine: 6,
+      highlightColor: STATE_COLORS.inserted,
+    }),
   });
 
   return steps;
@@ -202,7 +225,11 @@ export function generatePopSteps(elements: HeapElement[], heapType: HeapType): S
       id: stepId++,
       description: 'Heap is empty. Nothing to pop.',
       snapshot: { data: { elements: [], heapType } },
-      meta: createStepMeta({ comparisons, highlightedLine: 1 }),
+      meta: createStepMeta({
+        comparisons,
+        highlightedLine: 1,
+        highlightColor: STATE_COLORS.default,
+      }),
     });
     return steps;
   }
@@ -214,7 +241,7 @@ export function generatePopSteps(elements: HeapElement[], heapType: HeapType): S
     id: stepId++,
     description: `Popping root value ${rootValue} from ${heapType}-heap`,
     snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-    meta: createStepMeta({ comparisons, highlightedLine: 1 }),
+    meta: createStepMeta({ comparisons, highlightedLine: 1, highlightColor: STATE_COLORS.removed }),
   });
 
   if (heap.length === 1) {
@@ -222,7 +249,11 @@ export function generatePopSteps(elements: HeapElement[], heapType: HeapType): S
       id: stepId++,
       description: `Removed ${rootValue}. Heap is now empty.`,
       snapshot: { data: { elements: [], heapType } },
-      meta: createStepMeta({ comparisons, highlightedLine: 2 }),
+      meta: createStepMeta({
+        comparisons,
+        highlightedLine: 2,
+        highlightColor: STATE_COLORS.removed,
+      }),
     });
     return steps;
   }
@@ -236,7 +267,7 @@ export function generatePopSteps(elements: HeapElement[], heapType: HeapType): S
     id: stepId++,
     description: `Moved last element ${lastValue} to root position`,
     snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-    meta: createStepMeta({ comparisons, highlightedLine: 3 }),
+    meta: createStepMeta({ comparisons, highlightedLine: 3, highlightColor: STATE_COLORS.current }),
   });
 
   // Bubble down (heapify down)
@@ -259,7 +290,12 @@ export function generatePopSteps(elements: HeapElement[], heapType: HeapType): S
         id: stepId++,
         description: `Comparing ${heap[currentIndex].value} with left child ${heap[leftIndex].value}`,
         snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-        meta: createStepMeta({ comparisons, swaps, highlightedLine: 4 }),
+        meta: createStepMeta({
+          comparisons,
+          swaps,
+          highlightedLine: 4,
+          highlightColor: STATE_COLORS.comparing,
+        }),
         activeIndices: [currentIndex, leftIndex],
       });
 
@@ -278,7 +314,12 @@ export function generatePopSteps(elements: HeapElement[], heapType: HeapType): S
         id: stepId++,
         description: `Comparing ${heap[currentIndex].value} with right child ${heap[rightIndex].value}`,
         snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-        meta: createStepMeta({ comparisons, swaps, highlightedLine: 4 }),
+        meta: createStepMeta({
+          comparisons,
+          swaps,
+          highlightedLine: 4,
+          highlightColor: STATE_COLORS.comparing,
+        }),
         activeIndices: [currentIndex, rightIndex],
       });
 
@@ -296,7 +337,12 @@ export function generatePopSteps(elements: HeapElement[], heapType: HeapType): S
         id: stepId++,
         description: `Heap property satisfied. ${heap[currentIndex].value} is in correct position.`,
         snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-        meta: createStepMeta({ comparisons, swaps, highlightedLine: 5 }),
+        meta: createStepMeta({
+          comparisons,
+          swaps,
+          highlightedLine: 5,
+          highlightColor: STATE_COLORS.inserted,
+        }),
       });
       heapPropertySatisfied = true;
     } else {
@@ -309,7 +355,12 @@ export function generatePopSteps(elements: HeapElement[], heapType: HeapType): S
         id: stepId++,
         description: `Swapping ${heap[currentIndex].value} with ${heap[targetIndex].value}`,
         snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-        meta: createStepMeta({ comparisons, swaps, highlightedLine: 6 }),
+        meta: createStepMeta({
+          comparisons,
+          swaps,
+          highlightedLine: 6,
+          highlightColor: STATE_COLORS.swapping,
+        }),
         modifiedIndices: [currentIndex, targetIndex],
       });
 
@@ -332,7 +383,12 @@ export function generatePopSteps(elements: HeapElement[], heapType: HeapType): S
     id: stepId++,
     description: `Pop complete. Removed ${rootValue} from the heap.`,
     snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-    meta: createStepMeta({ comparisons, swaps, highlightedLine: 7 }),
+    meta: createStepMeta({
+      comparisons,
+      swaps,
+      highlightedLine: 7,
+      highlightColor: STATE_COLORS.default,
+    }),
   });
 
   return steps;
@@ -349,7 +405,7 @@ export function generatePeekSteps(elements: HeapElement[], heapType: HeapType): 
       id: stepId++,
       description: 'Heap is empty. Nothing to peek.',
       snapshot: { data: { elements: [], heapType } },
-      meta: createStepMeta({ highlightedLine: 1 }),
+      meta: createStepMeta({ highlightedLine: 1, highlightColor: STATE_COLORS.default }),
     });
     return steps;
   }
@@ -360,7 +416,7 @@ export function generatePeekSteps(elements: HeapElement[], heapType: HeapType): 
     id: stepId++,
     description: `Peeking at root: ${heap[0].value} (${heapType === 'max' ? 'maximum' : 'minimum'} value)`,
     snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-    meta: createStepMeta({ highlightedLine: 1 }),
+    meta: createStepMeta({ highlightedLine: 1, highlightColor: STATE_COLORS.current }),
   });
 
   return steps;
@@ -380,7 +436,7 @@ export function generateHeapifySteps(values: number[], heapType: HeapType): Step
     id: stepId++,
     description: `Building ${heapType}-heap from array [${values.join(', ')}]`,
     snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-    meta: createStepMeta({ comparisons, highlightedLine: 1 }),
+    meta: createStepMeta({ comparisons, highlightedLine: 1, highlightColor: STATE_COLORS.default }),
   });
 
   // Build heap (bottom-up)
@@ -400,7 +456,12 @@ export function generateHeapifySteps(values: number[], heapType: HeapType): Step
           heapType,
         },
       },
-      meta: createStepMeta({ comparisons, swaps, highlightedLine: 2 }),
+      meta: createStepMeta({
+        comparisons,
+        swaps,
+        highlightedLine: 2,
+        highlightColor: STATE_COLORS.current,
+      }),
     });
 
     // Bubble down
@@ -436,7 +497,12 @@ export function generateHeapifySteps(values: number[], heapType: HeapType): Step
           id: stepId++,
           description: `Swapping ${heap[currentIndex].value} with ${heap[targetIndex].value}`,
           snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-          meta: createStepMeta({ comparisons, swaps, highlightedLine: 3 }),
+          meta: createStepMeta({
+            comparisons,
+            swaps,
+            highlightedLine: 3,
+            highlightColor: STATE_COLORS.swapping,
+          }),
           modifiedIndices: [currentIndex, targetIndex],
         });
 
@@ -462,7 +528,12 @@ export function generateHeapifySteps(values: number[], heapType: HeapType): Step
     id: stepId++,
     description: `${heapType === 'max' ? 'Max' : 'Min'}-heap built successfully!`,
     snapshot: { data: { elements: heap.map((e) => ({ ...e })), heapType } },
-    meta: createStepMeta({ comparisons, swaps, highlightedLine: 4 }),
+    meta: createStepMeta({
+      comparisons,
+      swaps,
+      highlightedLine: 4,
+      highlightColor: STATE_COLORS.inserted,
+    }),
   });
 
   return steps;
@@ -527,7 +598,7 @@ function drawHeap(
   const treeAreaHeight = height - ARRAY_SECTION_HEIGHT;
 
   // Clear
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   // Draw heap type label

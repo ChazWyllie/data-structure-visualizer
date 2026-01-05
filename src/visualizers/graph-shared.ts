@@ -3,7 +3,7 @@
  * Shared infrastructure for graph visualizers
  */
 
-import { CANVAS_PADDING } from '../core/constants';
+import { CANVAS_PADDING, CANVAS_BACKGROUND_COLOR } from '../core/constants';
 
 // =============================================================================
 // Types
@@ -293,7 +293,7 @@ export function drawGraph(
   title?: string
 ): void {
   // Clear
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   // Title

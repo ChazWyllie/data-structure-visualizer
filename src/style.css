@@ -90,7 +90,7 @@
 
   /* === Layout (set dynamically) === */
   --header-height: 56px;
-  --sidebar-width: 520px;
+  --sidebar-width: 70%;
   --controls-height: 64px;
 }
 
@@ -575,10 +575,10 @@ body {
 .pseudocode-block {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  line-height: 1.8;
+  line-height: 1.5;
   background-color: var(--surface-code);
   border-radius: var(--radius-lg);
-  padding: var(--space-md);
+  padding: var(--space-sm);
   overflow-x: auto;
   border: 1px solid var(--border-subtle);
 }
@@ -590,8 +590,8 @@ body {
 
 .pseudocode-block span {
   display: block;
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--radius-md);
+  padding: 2px var(--space-xs);
+  border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
 }
 

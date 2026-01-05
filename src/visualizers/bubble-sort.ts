@@ -24,6 +24,7 @@ import {
   MIN_BAR_WIDTH,
   MAX_BAR_WIDTH,
   BAR_CORNER_RADIUS,
+  CANVAS_BACKGROUND_COLOR,
 } from '../core/constants';
 
 // =============================================================================
@@ -66,7 +67,12 @@ export function generateBubbleSortSteps(arr: number[]): Step<BubbleSortData>[] {
     id: stepId++,
     description: 'Initial array state',
     snapshot: { data: { elements: elements.map((e) => ({ ...e })) } },
-    meta: createStepMeta({ highlightedLine: 1 }),
+    meta: createStepMeta({
+      highlightedLine: 1,
+      highlightColor: STATE_COLORS.default,
+      reads: 0,
+      writes: 0,
+    }),
   });
 
   const n = elements.length;
@@ -77,7 +83,14 @@ export function generateBubbleSortSteps(arr: number[]): Step<BubbleSortData>[] {
       id: stepId++,
       description: `Pass ${i + 1}: Bubble largest unsorted element to position ${n - 1 - i}`,
       snapshot: { data: { elements: elements.map((e) => ({ ...e })) } },
-      meta: createStepMeta({ comparisons, swaps, highlightedLine: 2 }),
+      meta: createStepMeta({
+        comparisons,
+        swaps,
+        reads: comparisons * 2,
+        writes: swaps * 2,
+        highlightedLine: 2,
+        highlightColor: STATE_COLORS.active,
+      }),
     });
 
     for (let j = 0; j < n - i - 1; j++) {
@@ -96,7 +109,14 @@ export function generateBubbleSortSteps(arr: number[]): Step<BubbleSortData>[] {
         id: stepId++,
         description: `Comparing elements at index ${j} (${elements[j].value}) and ${j + 1} (${elements[j + 1].value})`,
         snapshot: { data: { elements: comparingElements } },
-        meta: createStepMeta({ comparisons, swaps, highlightedLine: 3 }),
+        meta: createStepMeta({
+          comparisons,
+          swaps,
+          reads: comparisons * 2,
+          writes: swaps * 2,
+          highlightedLine: 3,
+          highlightColor: STATE_COLORS.comparing,
+        }),
         activeIndices: [j, j + 1],
       });
 
@@ -116,7 +136,14 @@ export function generateBubbleSortSteps(arr: number[]): Step<BubbleSortData>[] {
           id: stepId++,
           description: `Swapping ${elements[j].value} and ${elements[j + 1].value} (${elements[j].value} > ${elements[j + 1].value})`,
           snapshot: { data: { elements: swappingElements } },
-          meta: createStepMeta({ comparisons, swaps, highlightedLine: 4 }),
+          meta: createStepMeta({
+            comparisons,
+            swaps,
+            reads: comparisons * 2,
+            writes: swaps * 2,
+            highlightedLine: 4,
+            highlightColor: STATE_COLORS.swapping,
+          }),
           activeIndices: [j, j + 1],
           modifiedIndices: [j, j + 1],
         });
@@ -134,7 +161,14 @@ export function generateBubbleSortSteps(arr: number[]): Step<BubbleSortData>[] {
       id: stepId++,
       description: `Element ${elements[n - 1 - i].value} is now in its sorted position`,
       snapshot: { data: { elements: elements.map((e) => ({ ...e })) } },
-      meta: createStepMeta({ comparisons, swaps, highlightedLine: 5 }),
+      meta: createStepMeta({
+        comparisons,
+        swaps,
+        reads: comparisons * 2,
+        writes: swaps * 2,
+        highlightedLine: 5,
+        highlightColor: STATE_COLORS.sorted,
+      }),
     });
   }
 
@@ -148,7 +182,14 @@ export function generateBubbleSortSteps(arr: number[]): Step<BubbleSortData>[] {
     snapshot: {
       data: { elements: elements.map((e) => ({ ...e, state: 'sorted' as ElementState })) },
     },
-    meta: createStepMeta({ comparisons, swaps, highlightedLine: 6 }),
+    meta: createStepMeta({
+      comparisons,
+      swaps,
+      reads: comparisons * 2,
+      writes: swaps * 2,
+      highlightedLine: 6,
+      highlightColor: STATE_COLORS.sorted,
+    }),
   });
 
   return steps;
@@ -168,7 +209,7 @@ function drawArrayBars(
   height: number
 ): void {
   // Clear canvas
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   if (elements.length === 0) {
@@ -256,7 +297,7 @@ class BubbleSortVisualizer implements Visualizer<BubbleSortData> {
           id: 0,
           description: 'Generated new random array',
           snapshot: { data: this.currentData },
-          meta: createStepMeta({ highlightedLine: 1 }),
+          meta: createStepMeta({ highlightedLine: 1, reads: 0, writes: 0 }),
         },
       ];
     }

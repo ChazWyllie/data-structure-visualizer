@@ -218,7 +218,7 @@ export function generateAStarSteps(
           pathCells: [],
         },
       },
-      meta: createStepMeta({ comparisons }),
+      meta: createStepMeta({ comparisons, highlightColor: CELL_COLORS.wall }),
     });
     return steps;
   }
@@ -250,7 +250,7 @@ export function generateAStarSteps(
         pathCells: [],
       },
     },
-    meta: createStepMeta({ highlightedLine: 0, comparisons }),
+    meta: createStepMeta({ highlightedLine: 0, comparisons, highlightColor: CELL_COLORS.start }),
   });
 
   steps.push({
@@ -269,7 +269,7 @@ export function generateAStarSteps(
         pathCells: [],
       },
     },
-    meta: createStepMeta({ highlightedLine: 1, comparisons }),
+    meta: createStepMeta({ highlightedLine: 1, comparisons, highlightColor: CELL_COLORS.start }),
   });
 
   let pathFound = false;
@@ -322,7 +322,11 @@ export function generateAStarSteps(
         },
       },
       activeIndices: [current.row * cols + current.col],
-      meta: createStepMeta({ highlightedLine: 2, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 2,
+        comparisons,
+        highlightColor: CELL_COLORS.current,
+      }),
     });
 
     // Check if we reached the goal
@@ -358,7 +362,7 @@ export function generateAStarSteps(
             pathCells,
           },
         },
-        meta: createStepMeta({ highlightedLine: 3, comparisons }),
+        meta: createStepMeta({ highlightedLine: 3, comparisons, highlightColor: CELL_COLORS.path }),
       });
 
       break;
@@ -420,7 +424,11 @@ export function generateAStarSteps(
               },
             },
             activeIndices: [neighbor.row * cols + neighbor.col],
-            meta: createStepMeta({ highlightedLine: 4, comparisons }),
+            meta: createStepMeta({
+              highlightedLine: 4,
+              comparisons,
+              highlightColor: CELL_COLORS.frontier,
+            }),
           });
         }
       }
@@ -444,7 +452,7 @@ export function generateAStarSteps(
           pathCells: [],
         },
       },
-      meta: createStepMeta({ highlightedLine: 5, comparisons }),
+      meta: createStepMeta({ highlightedLine: 5, comparisons, highlightColor: CELL_COLORS.wall }),
     });
   }
 
@@ -639,7 +647,7 @@ class AStarVisualizer implements Visualizer<AStarData> {
                 pathCells: [],
               },
             },
-            meta: createStepMeta({}),
+            meta: createStepMeta({ highlightColor: CELL_COLORS.empty }),
           },
         ];
       }

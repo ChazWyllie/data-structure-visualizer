@@ -16,7 +16,7 @@ import type {
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
-import { CANVAS_PADDING } from '../core/constants';
+import { CANVAS_PADDING, CANVAS_BACKGROUND_COLOR } from '../core/constants';
 
 // =============================================================================
 // Types
@@ -75,7 +75,7 @@ export function generateMakeSetSteps(nodes: DSUNode[], value: number): Step<Unio
       id: stepId++,
       description: `Element ${value} already exists in the set`,
       snapshot: { data: { nodes: cloneNodes(nodes) } },
-      meta: createStepMeta({ highlightedLine: 1 }),
+      meta: createStepMeta({ highlightedLine: 1, highlightColor: STATE_COLORS.default }),
     });
     return steps;
   }
@@ -84,7 +84,7 @@ export function generateMakeSetSteps(nodes: DSUNode[], value: number): Step<Unio
     id: stepId++,
     description: `Creating new set with element ${value}`,
     snapshot: { data: { nodes: cloneNodes(nodes) } },
-    meta: createStepMeta({ highlightedLine: 1, writes: 1 }),
+    meta: createStepMeta({ highlightedLine: 1, writes: 1, highlightColor: STATE_COLORS.current }),
   });
 
   // Create new node
@@ -101,7 +101,7 @@ export function generateMakeSetSteps(nodes: DSUNode[], value: number): Step<Unio
     id: stepId++,
     description: `Created set {${value}} - parent points to itself, rank = 0`,
     snapshot: { data: { nodes: cloneNodes(newNodes) } },
-    meta: createStepMeta({ highlightedLine: 2, writes: 1 }),
+    meta: createStepMeta({ highlightedLine: 2, writes: 1, highlightColor: STATE_COLORS.current }),
   });
 
   // Final state
@@ -110,7 +110,7 @@ export function generateMakeSetSteps(nodes: DSUNode[], value: number): Step<Unio
     id: stepId++,
     description: `Set {${value}} created successfully`,
     snapshot: { data: { nodes: cloneNodes(newNodes) } },
-    meta: createStepMeta({ highlightedLine: 3, writes: 1 }),
+    meta: createStepMeta({ highlightedLine: 3, writes: 1, highlightColor: STATE_COLORS.root }),
   });
 
   return steps;
@@ -127,7 +127,7 @@ export function generateFindSteps(nodes: DSUNode[], x: number): Step<UnionFindDa
       id: stepId++,
       description: `Element ${x} not found in any set`,
       snapshot: { data: { nodes: cloneNodes(nodes) } },
-      meta: createStepMeta({ highlightedLine: 1, reads }),
+      meta: createStepMeta({ highlightedLine: 1, reads, highlightColor: STATE_COLORS.default }),
     });
     return steps;
   }
@@ -139,7 +139,7 @@ export function generateFindSteps(nodes: DSUNode[], x: number): Step<UnionFindDa
     id: stepId++,
     description: `Finding root of element ${x}`,
     snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-    meta: createStepMeta({ highlightedLine: 1, reads }),
+    meta: createStepMeta({ highlightedLine: 1, reads, highlightColor: STATE_COLORS.current }),
   });
 
   // Find path to root
@@ -162,7 +162,7 @@ export function generateFindSteps(nodes: DSUNode[], x: number): Step<UnionFindDa
       id: stepId++,
       description: `${workingNodes[current].id} -> parent is ${parentId}, following...`,
       snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-      meta: createStepMeta({ highlightedLine: 2, reads }),
+      meta: createStepMeta({ highlightedLine: 2, reads, highlightColor: STATE_COLORS.path }),
     });
 
     current = parentIndex;
@@ -176,7 +176,7 @@ export function generateFindSteps(nodes: DSUNode[], x: number): Step<UnionFindDa
     id: stepId++,
     description: `Found root: ${workingNodes[current].id}`,
     snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-    meta: createStepMeta({ highlightedLine: 3, reads }),
+    meta: createStepMeta({ highlightedLine: 3, reads, highlightColor: STATE_COLORS.root }),
   });
 
   // Path compression
@@ -185,7 +185,7 @@ export function generateFindSteps(nodes: DSUNode[], x: number): Step<UnionFindDa
       id: stepId++,
       description: 'Applying path compression - pointing all nodes directly to root',
       snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-      meta: createStepMeta({ highlightedLine: 4, reads }),
+      meta: createStepMeta({ highlightedLine: 4, reads, highlightColor: STATE_COLORS.path }),
     });
 
     const rootId = workingNodes[current].id;
@@ -197,7 +197,12 @@ export function generateFindSteps(nodes: DSUNode[], x: number): Step<UnionFindDa
         id: stepId++,
         description: `${workingNodes[pathIndex].id}.parent = ${rootId} (path compression)`,
         snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-        meta: createStepMeta({ highlightedLine: 5, reads, writes: path.length }),
+        meta: createStepMeta({
+          highlightedLine: 5,
+          reads,
+          writes: path.length,
+          highlightColor: STATE_COLORS.found,
+        }),
       });
     }
   }
@@ -212,7 +217,7 @@ export function generateFindSteps(nodes: DSUNode[], x: number): Step<UnionFindDa
     id: stepId++,
     description: `Find(${x}) = ${workingNodes[current].id}`,
     snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-    meta: createStepMeta({ highlightedLine: 6, reads }),
+    meta: createStepMeta({ highlightedLine: 6, reads, highlightColor: STATE_COLORS.found }),
   });
 
   return steps;
@@ -232,7 +237,7 @@ export function generateUnionSteps(nodes: DSUNode[], x: number, y: number): Step
       id: stepId++,
       description: `Cannot union: element ${xIndex === -1 ? x : y} not found`,
       snapshot: { data: { nodes: cloneNodes(nodes) } },
-      meta: createStepMeta({ highlightedLine: 1, reads }),
+      meta: createStepMeta({ highlightedLine: 1, reads, highlightColor: STATE_COLORS.default }),
     });
     return steps;
   }
@@ -245,7 +250,7 @@ export function generateUnionSteps(nodes: DSUNode[], x: number, y: number): Step
     id: stepId++,
     description: `Union(${x}, ${y}) - finding roots of both elements`,
     snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-    meta: createStepMeta({ highlightedLine: 1, reads }),
+    meta: createStepMeta({ highlightedLine: 1, reads, highlightColor: STATE_COLORS.current }),
   });
 
   // Find roots
@@ -270,7 +275,7 @@ export function generateUnionSteps(nodes: DSUNode[], x: number, y: number): Step
     id: stepId++,
     description: `Root of ${x} is ${workingNodes[xRoot].id}, root of ${y} is ${workingNodes[yRoot].id}`,
     snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-    meta: createStepMeta({ highlightedLine: 2, reads }),
+    meta: createStepMeta({ highlightedLine: 2, reads, highlightColor: STATE_COLORS.root }),
   });
 
   // Check if already in same set
@@ -279,7 +284,7 @@ export function generateUnionSteps(nodes: DSUNode[], x: number, y: number): Step
       id: stepId++,
       description: `${x} and ${y} are already in the same set (root: ${workingNodes[xRoot].id})`,
       snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-      meta: createStepMeta({ highlightedLine: 3, reads }),
+      meta: createStepMeta({ highlightedLine: 3, reads, highlightColor: STATE_COLORS.root }),
     });
     return steps;
   }
@@ -292,7 +297,7 @@ export function generateUnionSteps(nodes: DSUNode[], x: number, y: number): Step
     id: stepId++,
     description: `Comparing ranks: rank(${workingNodes[xRoot].id}) = ${xRank}, rank(${workingNodes[yRoot].id}) = ${yRank}`,
     snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-    meta: createStepMeta({ highlightedLine: 4, reads }),
+    meta: createStepMeta({ highlightedLine: 4, reads, highlightColor: STATE_COLORS.current }),
   });
 
   if (xRank < yRank) {
@@ -305,7 +310,12 @@ export function generateUnionSteps(nodes: DSUNode[], x: number, y: number): Step
       id: stepId++,
       description: `${workingNodes[xRoot].id}.parent = ${workingNodes[yRoot].id} (lower rank attaches to higher)`,
       snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-      meta: createStepMeta({ highlightedLine: 5, reads, writes }),
+      meta: createStepMeta({
+        highlightedLine: 5,
+        reads,
+        writes,
+        highlightColor: STATE_COLORS.merged,
+      }),
     });
   } else if (xRank > yRank) {
     // Attach y's tree under x
@@ -317,7 +327,12 @@ export function generateUnionSteps(nodes: DSUNode[], x: number, y: number): Step
       id: stepId++,
       description: `${workingNodes[yRoot].id}.parent = ${workingNodes[xRoot].id} (lower rank attaches to higher)`,
       snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-      meta: createStepMeta({ highlightedLine: 5, reads, writes }),
+      meta: createStepMeta({
+        highlightedLine: 5,
+        reads,
+        writes,
+        highlightColor: STATE_COLORS.merged,
+      }),
     });
   } else {
     // Same rank - attach y under x and increment x's rank
@@ -330,7 +345,12 @@ export function generateUnionSteps(nodes: DSUNode[], x: number, y: number): Step
       id: stepId++,
       description: `Same rank: ${workingNodes[yRoot].id}.parent = ${workingNodes[xRoot].id}, rank(${workingNodes[xRoot].id})++`,
       snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-      meta: createStepMeta({ highlightedLine: 6, reads, writes }),
+      meta: createStepMeta({
+        highlightedLine: 6,
+        reads,
+        writes,
+        highlightColor: STATE_COLORS.merged,
+      }),
     });
   }
 
@@ -343,7 +363,12 @@ export function generateUnionSteps(nodes: DSUNode[], x: number, y: number): Step
     id: stepId++,
     description: `Union complete. ${x} and ${y} are now in the same set.`,
     snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-    meta: createStepMeta({ highlightedLine: 7, reads, writes }),
+    meta: createStepMeta({
+      highlightedLine: 7,
+      reads,
+      writes,
+      highlightColor: STATE_COLORS.merged,
+    }),
   });
 
   return steps;
@@ -366,7 +391,7 @@ export function generateConnectedSteps(
       id: stepId++,
       description: `Cannot check: element ${xIndex === -1 ? x : y} not found`,
       snapshot: { data: { nodes: cloneNodes(nodes) } },
-      meta: createStepMeta({ highlightedLine: 1, reads }),
+      meta: createStepMeta({ highlightedLine: 1, reads, highlightColor: STATE_COLORS.default }),
     });
     return steps;
   }
@@ -379,7 +404,7 @@ export function generateConnectedSteps(
     id: stepId++,
     description: `Checking if ${x} and ${y} are connected`,
     snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-    meta: createStepMeta({ highlightedLine: 1, reads }),
+    meta: createStepMeta({ highlightedLine: 1, reads, highlightColor: STATE_COLORS.current }),
   });
 
   // Find roots
@@ -408,7 +433,7 @@ export function generateConnectedSteps(
       ? `Yes! ${x} and ${y} are connected (same root: ${workingNodes[xRoot].id})`
       : `No. ${x} (root: ${workingNodes[xRoot].id}) and ${y} (root: ${workingNodes[yRoot].id}) are in different sets`,
     snapshot: { data: { nodes: cloneNodes(workingNodes) } },
-    meta: createStepMeta({ highlightedLine: 2, reads }),
+    meta: createStepMeta({ highlightedLine: 2, reads, highlightColor: STATE_COLORS.found }),
   });
 
   return steps;
@@ -520,7 +545,7 @@ function drawUnionFind(
   const { nodes } = data;
 
   // Clear
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   // Title
@@ -647,7 +672,7 @@ class UnionFindVisualizer implements Visualizer<UnionFindData> {
             id: 0,
             description: `Created ${count} individual sets`,
             snapshot: { data: { nodes: newNodes } },
-            meta: createStepMeta({ writes: count }),
+            meta: createStepMeta({ writes: count, highlightColor: STATE_COLORS.default }),
           },
         ];
       }
@@ -657,7 +682,7 @@ class UnionFindVisualizer implements Visualizer<UnionFindData> {
             id: 0,
             description: `Union-Find structure ready with ${nodes.length} elements`,
             snapshot: { data: { nodes } },
-            meta: createStepMeta({}),
+            meta: createStepMeta({ highlightColor: STATE_COLORS.default }),
           },
         ];
     }

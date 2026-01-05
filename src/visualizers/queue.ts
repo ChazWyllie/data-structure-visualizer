@@ -17,7 +17,7 @@ import type {
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
-import { CANVAS_PADDING } from '../core/constants';
+import { CANVAS_PADDING, CANVAS_BACKGROUND_COLOR } from '../core/constants';
 
 // =============================================================================
 // Types
@@ -70,7 +70,7 @@ export function generateEnqueueSteps(
     id: stepId++,
     description: `Preparing to enqueue ${value}`,
     snapshot: { data: { elements: initialElements, maxSize } },
-    meta: createStepMeta({ writes, highlightedLine: 1 }),
+    meta: createStepMeta({ writes, highlightedLine: 1, highlightColor: STATE_COLORS.default }),
   });
 
   if (queue.length >= maxSize) {
@@ -78,7 +78,7 @@ export function generateEnqueueSteps(
       id: stepId++,
       description: `Queue is full! Cannot enqueue ${value}`,
       snapshot: { data: { elements: initialElements, maxSize } },
-      meta: createStepMeta({ writes, highlightedLine: 2 }),
+      meta: createStepMeta({ writes, highlightedLine: 2, highlightColor: STATE_COLORS.dequeuing }),
     });
     return steps;
   }
@@ -97,7 +97,7 @@ export function generateEnqueueSteps(
     id: stepId++,
     description: `Adding ${value} to the rear of the queue`,
     snapshot: { data: { elements: enqueuingElements, maxSize } },
-    meta: createStepMeta({ writes, highlightedLine: 3 }),
+    meta: createStepMeta({ writes, highlightedLine: 3, highlightColor: STATE_COLORS.enqueuing }),
   });
 
   // Final state
@@ -118,7 +118,7 @@ export function generateEnqueueSteps(
     id: stepId++,
     description: `Successfully enqueued ${value}. Queue size: ${finalElements.length}`,
     snapshot: { data: { elements: finalElements, maxSize } },
-    meta: createStepMeta({ writes, highlightedLine: 4 }),
+    meta: createStepMeta({ writes, highlightedLine: 4, highlightColor: STATE_COLORS.rear }),
   });
 
   return steps;
@@ -137,7 +137,7 @@ export function generateDequeueSteps(
       id: stepId++,
       description: 'Queue is empty! Cannot dequeue',
       snapshot: { data: { elements: [], maxSize } },
-      meta: createStepMeta({ reads, highlightedLine: 1 }),
+      meta: createStepMeta({ reads, highlightedLine: 1, highlightColor: STATE_COLORS.dequeuing }),
     });
     return steps;
   }
@@ -152,7 +152,7 @@ export function generateDequeueSteps(
     id: stepId++,
     description: `Preparing to dequeue (front value: ${queue[0].value})`,
     snapshot: { data: { elements: initialElements, maxSize } },
-    meta: createStepMeta({ reads, highlightedLine: 1 }),
+    meta: createStepMeta({ reads, highlightedLine: 1, highlightColor: STATE_COLORS.front }),
   });
 
   // Dequeuing animation
@@ -171,7 +171,7 @@ export function generateDequeueSteps(
     id: stepId++,
     description: `Removing ${dequeuedValue} from the front of the queue`,
     snapshot: { data: { elements: dequeueingElements, maxSize } },
-    meta: createStepMeta({ reads, highlightedLine: 2 }),
+    meta: createStepMeta({ reads, highlightedLine: 2, highlightColor: STATE_COLORS.dequeuing }),
   });
 
   // Final state
@@ -189,7 +189,7 @@ export function generateDequeueSteps(
     id: stepId++,
     description: `Dequeued ${dequeuedValue}. Queue size: ${finalElements.length}`,
     snapshot: { data: { elements: finalElements, maxSize } },
-    meta: createStepMeta({ reads, highlightedLine: 3 }),
+    meta: createStepMeta({ reads, highlightedLine: 3, highlightColor: STATE_COLORS.front }),
   });
 
   return steps;
@@ -206,7 +206,7 @@ function drawQueue(
   width: number,
   height: number
 ): void {
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   const centerY = height / 2;

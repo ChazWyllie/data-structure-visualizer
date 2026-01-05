@@ -17,7 +17,7 @@ import type {
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
 import type { SortingData } from './sorting-shared';
-import { drawArrayBars, generateRandomArray } from './sorting-shared';
+import { drawArrayBars, generateRandomArray, STATE_COLORS } from './sorting-shared';
 
 export function generateInsertionSortSteps(arr: number[]): Step<SortingData>[] {
   const steps: Step<SortingData>[] = [];
@@ -30,7 +30,12 @@ export function generateInsertionSortSteps(arr: number[]): Step<SortingData>[] {
     id: stepId++,
     description: 'Initial array state',
     snapshot: { data: { elements: elements.map((e) => ({ ...e })) } },
-    meta: createStepMeta({ highlightedLine: 1 }),
+    meta: createStepMeta({
+      reads: 0,
+      writes: 0,
+      highlightedLine: 1,
+      highlightColor: STATE_COLORS.default,
+    }),
   });
 
   const n = elements.length;
@@ -50,7 +55,14 @@ export function generateInsertionSortSteps(arr: number[]): Step<SortingData>[] {
       id: stepId++,
       description: `Inserting element ${key} at index ${i} into sorted portion`,
       snapshot: { data: { elements: pickElements } },
-      meta: createStepMeta({ comparisons, swaps, highlightedLine: 2 }),
+      meta: createStepMeta({
+        comparisons,
+        swaps,
+        reads: comparisons * 2,
+        writes: swaps * 2,
+        highlightedLine: 2,
+        highlightColor: STATE_COLORS.active,
+      }),
     });
 
     while (j >= 0 && elements[j].value > key) {
@@ -69,7 +81,14 @@ export function generateInsertionSortSteps(arr: number[]): Step<SortingData>[] {
         id: stepId++,
         description: `Comparing ${key} with ${elements[j].value} at index ${j}`,
         snapshot: { data: { elements: comparingElements } },
-        meta: createStepMeta({ comparisons, swaps, highlightedLine: 3 }),
+        meta: createStepMeta({
+          comparisons,
+          swaps,
+          reads: comparisons * 2,
+          writes: swaps * 2,
+          highlightedLine: 3,
+          highlightColor: STATE_COLORS.comparing,
+        }),
         activeIndices: [j, i],
       });
 
@@ -83,7 +102,14 @@ export function generateInsertionSortSteps(arr: number[]): Step<SortingData>[] {
         id: stepId++,
         description: `Shifting ${elements[j + 1].value} from index ${j} to ${j + 1}`,
         snapshot: { data: { elements: shiftElements } },
-        meta: createStepMeta({ comparisons, swaps, highlightedLine: 4 }),
+        meta: createStepMeta({
+          comparisons,
+          swaps,
+          reads: comparisons * 2,
+          writes: swaps * 2,
+          highlightedLine: 4,
+          highlightColor: STATE_COLORS.swapping,
+        }),
         modifiedIndices: [j, j + 1],
       });
 
@@ -104,7 +130,14 @@ export function generateInsertionSortSteps(arr: number[]): Step<SortingData>[] {
       id: stepId++,
       description: `Inserted ${key} at index ${j + 1}`,
       snapshot: { data: { elements: insertedElements } },
-      meta: createStepMeta({ comparisons, swaps, highlightedLine: 5 }),
+      meta: createStepMeta({
+        comparisons,
+        swaps,
+        reads: comparisons * 2,
+        writes: swaps * 2,
+        highlightedLine: 5,
+        highlightColor: STATE_COLORS.sorted,
+      }),
     });
   }
 
@@ -114,7 +147,14 @@ export function generateInsertionSortSteps(arr: number[]): Step<SortingData>[] {
     snapshot: {
       data: { elements: elements.map((e) => ({ ...e, state: 'sorted' as ElementState })) },
     },
-    meta: createStepMeta({ comparisons, swaps, highlightedLine: 6 }),
+    meta: createStepMeta({
+      comparisons,
+      swaps,
+      reads: comparisons * 2,
+      writes: swaps * 2,
+      highlightedLine: 6,
+      highlightColor: STATE_COLORS.sorted,
+    }),
   });
 
   return steps;
@@ -151,7 +191,7 @@ class InsertionSortVisualizer implements Visualizer<SortingData> {
           id: 0,
           description: 'Generated new random array',
           snapshot: { data: this.currentData },
-          meta: createStepMeta({ highlightedLine: 1 }),
+          meta: createStepMeta({ reads: 0, writes: 0, highlightedLine: 1 }),
         },
       ];
     }

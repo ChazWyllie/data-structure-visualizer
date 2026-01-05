@@ -11,7 +11,7 @@ import type {
   PlaybackCommand,
   OperationCounters,
 } from '../core/types';
-import { registry, DEFAULT_ANIMATION_SPEED_MS } from '../core';
+import { registry, DEFAULT_ANIMATION_SPEED_MS, CANVAS_BACKGROUND_COLOR } from '../core';
 import { CanvasManager, RenderLoop } from '../render';
 import {
   mountLayout,
@@ -32,8 +32,6 @@ import { StepEngine } from '../engine/step-engine';
 
 // Import visualizers to trigger registration
 import '../visualizers';
-
-/* eslint-disable no-console */
 
 /**
  * Main Application Controller
@@ -117,9 +115,6 @@ export class App {
 
     // Start in landing mode (do not auto-load a visualizer)
     // Navigation is handled by main.ts via hash routing
-
-    console.log('Data Structure Visualizer initialized');
-    console.log(`Registered visualizers: ${registry.count}`);
   }
 
   /**
@@ -288,7 +283,6 @@ export class App {
    * Load a visualizer by ID
    */
   private loadVisualizer(id: string): void {
-    console.log(`[loadVisualizer] Loading: ${id}`);
     // Clean up previous visualizer
     if (this.currentVisualizer?.dispose) {
       this.currentVisualizer.dispose();
@@ -320,8 +314,6 @@ export class App {
 
     // Generate initial steps
     this.regenerateSteps();
-
-    console.log(`Loaded visualizer: ${visualizer.config.name}`);
   }
 
   /**
@@ -371,7 +363,6 @@ export class App {
     }
 
     // Note: render() is called automatically via step-change event from loadSteps()
-    console.log(`Action "${actionId}" generated ${steps.length} steps`);
   }
 
   /**
@@ -403,8 +394,6 @@ export class App {
     this.controls.updateState(this.animationState);
     this.updateStepInfo();
     // Note: render() is called automatically via step-change event from loadSteps()
-
-    console.log(`Generated ${steps.length} steps`);
   }
 
   /**
@@ -450,15 +439,11 @@ export class App {
     this.canvasManager.prepareForDraw();
 
     if (!this.currentVisualizer) {
-      console.log('[render] No currentVisualizer, rendering empty state');
       this.renderEmptyState();
       return;
     }
 
     const currentStep = this.stepEngine.getCurrentStep();
-    console.log(
-      `[render] visualizer=${this.currentVisualizer.config.id}, step=${currentStep?.id}, desc=${currentStep?.description?.slice(0, 50)}`
-    );
     if (currentStep) {
       const ctx = this.canvasManager.getContext();
       const snapshot: Snapshot<unknown> = currentStep.snapshot;
@@ -476,7 +461,7 @@ export class App {
     const { width, height } = this.canvasManager.getDimensions();
 
     // Clear with background
-    ctx.fillStyle = '#0a0a0a';
+    ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
     ctx.fillRect(0, 0, width, height);
 
     // Draw icon
@@ -567,7 +552,6 @@ export class App {
     ); // isEntryMode = true
 
     this.currentLandingPage.mount();
-    console.log('Showing entry page (V2 Showcase)');
   }
 
   /**
@@ -612,8 +596,6 @@ export class App {
     this.showcase.unmount();
     this.unmountCurrentLandingPage();
     this.landing.mount();
-
-    console.log('Showing landing page');
   }
 
   /**
@@ -644,8 +626,6 @@ export class App {
 
     // Mount showcase
     this.showcase.mount();
-
-    console.log('Showing showcase directory');
   }
 
   /**
@@ -698,7 +678,6 @@ export class App {
     }
 
     this.currentLandingPage.mount();
-    console.log(`Showing landing page preview: ${landingId}`);
   }
 
   /**

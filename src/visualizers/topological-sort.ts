@@ -18,7 +18,7 @@ import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
 import { CANVAS_PADDING } from '../core/constants';
 import type { GraphData, GraphNode, GraphEdge } from './graph-shared';
-import { cloneGraph, drawGraph, NODE_STATE_COLORS } from './graph-shared';
+import { cloneGraph, drawGraph, NODE_STATE_COLORS, EDGE_STATE_COLORS } from './graph-shared';
 
 // =============================================================================
 // Types
@@ -140,7 +140,7 @@ export function generateTopoSortSteps(graph: GraphData): Step<TopoSortData>[] {
         queue: [],
       },
     },
-    meta: createStepMeta({ highlightedLine: 0 }),
+    meta: createStepMeta({ highlightedLine: 0, highlightColor: NODE_STATE_COLORS.current }),
   });
 
   // Show in-degrees
@@ -159,7 +159,7 @@ export function generateTopoSortSteps(graph: GraphData): Step<TopoSortData>[] {
         queue: [],
       },
     },
-    meta: createStepMeta({ highlightedLine: 1 }),
+    meta: createStepMeta({ highlightedLine: 1, highlightColor: NODE_STATE_COLORS.current }),
   });
 
   // Find all nodes with in-degree 0
@@ -184,7 +184,7 @@ export function generateTopoSortSteps(graph: GraphData): Step<TopoSortData>[] {
         queue: [...queue],
       },
     },
-    meta: createStepMeta({ highlightedLine: 2 }),
+    meta: createStepMeta({ highlightedLine: 2, highlightColor: NODE_STATE_COLORS.frontier }),
   });
 
   // Process queue
@@ -209,7 +209,11 @@ export function generateTopoSortSteps(graph: GraphData): Step<TopoSortData>[] {
           queue: [...queue],
         },
       },
-      meta: createStepMeta({ highlightedLine: 3, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 3,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.current,
+      }),
     });
 
     // Add to sorted order
@@ -251,7 +255,11 @@ export function generateTopoSortSteps(graph: GraphData): Step<TopoSortData>[] {
               queue: [...queue],
             },
           },
-          meta: createStepMeta({ highlightedLine: 4, comparisons }),
+          meta: createStepMeta({
+            highlightedLine: 4,
+            comparisons,
+            highlightColor: NODE_STATE_COLORS.frontier,
+          }),
         });
       }
     }
@@ -267,7 +275,11 @@ export function generateTopoSortSteps(graph: GraphData): Step<TopoSortData>[] {
           queue: [...queue],
         },
       },
-      meta: createStepMeta({ highlightedLine: 5, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 5,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.visited,
+      }),
     });
   }
 
@@ -284,7 +296,11 @@ export function generateTopoSortSteps(graph: GraphData): Step<TopoSortData>[] {
           queue: [],
         },
       },
-      meta: createStepMeta({ highlightedLine: 6, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 6,
+        comparisons,
+        highlightColor: EDGE_STATE_COLORS.rejected,
+      }),
     });
   } else {
     // Mark all as complete
@@ -306,7 +322,11 @@ export function generateTopoSortSteps(graph: GraphData): Step<TopoSortData>[] {
           queue: [],
         },
       },
-      meta: createStepMeta({ highlightedLine: 7, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 7,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.inMST,
+      }),
     });
   }
 
@@ -417,7 +437,7 @@ class TopologicalSortVisualizer implements Visualizer<TopoSortData> {
                 queue: [],
               },
             },
-            meta: createStepMeta({}),
+            meta: createStepMeta({ highlightColor: NODE_STATE_COLORS.default }),
           },
         ];
       }

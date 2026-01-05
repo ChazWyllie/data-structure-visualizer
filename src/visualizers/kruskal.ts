@@ -122,7 +122,11 @@ export function generateKruskalSteps(graph: GraphData): Step<KruskalData>[] {
         unionFind: { parent: new Map(uf.parent), rank: new Map(uf.rank) },
       },
     },
-    meta: createStepMeta({ highlightedLine: 1, comparisons }),
+    meta: createStepMeta({
+      highlightedLine: 1,
+      comparisons,
+      highlightColor: NODE_STATE_COLORS.current,
+    }),
   });
 
   // Sort edges by weight
@@ -139,7 +143,11 @@ export function generateKruskalSteps(graph: GraphData): Step<KruskalData>[] {
         unionFind: { parent: new Map(uf.parent), rank: new Map(uf.rank) },
       },
     },
-    meta: createStepMeta({ highlightedLine: 2, comparisons }),
+    meta: createStepMeta({
+      highlightedLine: 2,
+      comparisons,
+      highlightColor: NODE_STATE_COLORS.current,
+    }),
   });
 
   // Process edges in order
@@ -173,7 +181,11 @@ export function generateKruskalSteps(graph: GraphData): Step<KruskalData>[] {
           unionFind: { parent: new Map(uf.parent), rank: new Map(uf.rank) },
         },
       },
-      meta: createStepMeta({ highlightedLine: 3, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 3,
+        comparisons,
+        highlightColor: EDGE_STATE_COLORS.considering,
+      }),
     });
 
     // Check if adding this edge creates a cycle (using Union-Find)
@@ -197,7 +209,11 @@ export function generateKruskalSteps(graph: GraphData): Step<KruskalData>[] {
             unionFind: { parent: new Map(uf.parent), rank: new Map(uf.rank) },
           },
         },
-        meta: createStepMeta({ highlightedLine: 4, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 4,
+          comparisons,
+          highlightColor: EDGE_STATE_COLORS.rejected,
+        }),
       });
 
       // Reset edge state
@@ -231,7 +247,11 @@ export function generateKruskalSteps(graph: GraphData): Step<KruskalData>[] {
             unionFind: { parent: new Map(uf.parent), rank: new Map(uf.rank) },
           },
         },
-        meta: createStepMeta({ highlightedLine: 5, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 5,
+          comparisons,
+          highlightColor: EDGE_STATE_COLORS.inMST,
+        }),
       });
     }
 
@@ -272,7 +292,11 @@ export function generateKruskalSteps(graph: GraphData): Step<KruskalData>[] {
         unionFind: { parent: new Map(uf.parent), rank: new Map(uf.rank) },
       },
     },
-    meta: createStepMeta({ highlightedLine: 6, comparisons }),
+    meta: createStepMeta({
+      highlightedLine: 6,
+      comparisons,
+      highlightColor: NODE_STATE_COLORS.inMST,
+    }),
   });
 
   return steps;
@@ -379,7 +403,7 @@ class KruskalVisualizer implements Visualizer<KruskalData> {
                 unionFind: uf,
               },
             },
-            meta: createStepMeta({}),
+            meta: createStepMeta({ highlightColor: NODE_STATE_COLORS.default }),
           },
         ];
       }

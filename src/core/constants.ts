@@ -22,6 +22,9 @@ export const SPEED_STEP_MS = 50;
 // Canvas Constants
 // =============================================================================
 
+/** Canvas background color (matches CSS --surface-canvas) */
+export const CANVAS_BACKGROUND_COLOR = '#0a0a0a';
+
 /** Minimum canvas padding in pixels */
 export const CANVAS_PADDING = 20;
 

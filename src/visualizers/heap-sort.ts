@@ -17,7 +17,7 @@ import type {
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
 import type { SortingData } from './sorting-shared';
-import { drawArrayBars, generateRandomArray } from './sorting-shared';
+import { drawArrayBars, generateRandomArray, STATE_COLORS } from './sorting-shared';
 
 interface HeapStep {
   elements: { value: number; state: ElementState }[];
@@ -25,6 +25,7 @@ interface HeapStep {
   comparisons: number;
   swaps: number;
   line: number;
+  color: string;
   activeIndices?: number[];
   modifiedIndices?: number[];
 }
@@ -42,6 +43,7 @@ export function generateHeapSortSteps(arr: number[]): Step<SortingData>[] {
     comparisons: 0,
     swaps: 0,
     line: 1,
+    color: STATE_COLORS.default,
   });
 
   function heapify(size: number, i: number, sortedStart: number): void {
@@ -65,6 +67,7 @@ export function generateHeapSortSteps(arr: number[]): Step<SortingData>[] {
       comparisons,
       swaps,
       line: 4,
+      color: STATE_COLORS.comparing,
     });
 
     if (left < size) {
@@ -101,6 +104,7 @@ export function generateHeapSortSteps(arr: number[]): Step<SortingData>[] {
         comparisons,
         swaps,
         line: 5,
+        color: STATE_COLORS.swapping,
         modifiedIndices: [i, largest],
       });
 
@@ -115,6 +119,7 @@ export function generateHeapSortSteps(arr: number[]): Step<SortingData>[] {
     comparisons,
     swaps,
     line: 2,
+    color: STATE_COLORS.active,
   });
 
   for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
@@ -128,6 +133,7 @@ export function generateHeapSortSteps(arr: number[]): Step<SortingData>[] {
     comparisons,
     swaps,
     line: 3,
+    color: STATE_COLORS.pivot,
   });
 
   // Extract elements from heap
@@ -147,6 +153,7 @@ export function generateHeapSortSteps(arr: number[]): Step<SortingData>[] {
       comparisons,
       swaps,
       line: 6,
+      color: STATE_COLORS.swapping,
       modifiedIndices: [0, i],
     });
 
@@ -164,6 +171,7 @@ export function generateHeapSortSteps(arr: number[]): Step<SortingData>[] {
     comparisons,
     swaps,
     line: 7,
+    color: STATE_COLORS.sorted,
   });
 
   return heapSteps.map((step, idx) => ({
@@ -173,7 +181,10 @@ export function generateHeapSortSteps(arr: number[]): Step<SortingData>[] {
     meta: createStepMeta({
       comparisons: step.comparisons,
       swaps: step.swaps,
+      reads: step.comparisons * 2,
+      writes: step.swaps * 2,
       highlightedLine: step.line,
+      highlightColor: step.color,
     }),
     activeIndices: step.activeIndices,
     modifiedIndices: step.modifiedIndices,
@@ -210,7 +221,7 @@ class HeapSortVisualizer implements Visualizer<SortingData> {
           id: 0,
           description: 'Generated new random array',
           snapshot: { data: this.currentData },
-          meta: createStepMeta({ highlightedLine: 1 }),
+          meta: createStepMeta({ highlightedLine: 1, reads: 0, writes: 0 }),
         },
       ];
     }

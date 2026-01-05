@@ -10,6 +10,7 @@ import {
   MIN_BAR_WIDTH,
   MAX_BAR_WIDTH,
   BAR_CORNER_RADIUS,
+  CANVAS_BACKGROUND_COLOR,
 } from '../core/constants';
 
 export interface SortingData {
@@ -75,7 +76,7 @@ export function drawBarsFromState(
   height: number
 ): void {
   // Clear canvas
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   if (bars.length === 0) {

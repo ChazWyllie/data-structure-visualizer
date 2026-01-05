@@ -16,7 +16,7 @@ import type {
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
-import { CANVAS_PADDING } from '../core/constants';
+import { CANVAS_PADDING, CANVAS_BACKGROUND_COLOR } from '../core/constants';
 
 // =============================================================================
 // Types
@@ -194,7 +194,7 @@ export function generateInsertSteps(root: BSTNode | null, value: number): Step<B
     id: stepId++,
     description: `Inserting value ${value} into BST`,
     snapshot: { data: { root: bstToSnapshotNode(root, stateMap) } },
-    meta: createStepMeta({ comparisons, highlightedLine: 1 }),
+    meta: createStepMeta({ comparisons, highlightedLine: 1, highlightColor: STATE_COLORS.default }),
   });
 
   if (!root) {
@@ -205,7 +205,11 @@ export function generateInsertSteps(root: BSTNode | null, value: number): Step<B
       id: stepId++,
       description: `Tree is empty. Creating root node with value ${value}`,
       snapshot: { data: { root: bstToSnapshotNode(newRoot, insertMap) } },
-      meta: createStepMeta({ comparisons, highlightedLine: 2 }),
+      meta: createStepMeta({
+        comparisons,
+        highlightedLine: 2,
+        highlightColor: STATE_COLORS.inserting,
+      }),
     });
 
     const finalMap = new Map<number, NodeState>([[value, 'found']]);
@@ -213,7 +217,7 @@ export function generateInsertSteps(root: BSTNode | null, value: number): Step<B
       id: stepId++,
       description: `Successfully inserted ${value} as root`,
       snapshot: { data: { root: bstToSnapshotNode(newRoot, finalMap) } },
-      meta: createStepMeta({ comparisons, highlightedLine: 3 }),
+      meta: createStepMeta({ comparisons, highlightedLine: 3, highlightColor: STATE_COLORS.found }),
     });
 
     return steps;
@@ -237,7 +241,11 @@ export function generateInsertSteps(root: BSTNode | null, value: number): Step<B
         id: stepId++,
         description: `Value ${value} already exists in tree. Skipping insertion.`,
         snapshot: { data: { root: bstToSnapshotNode(root, pathMap) } },
-        meta: createStepMeta({ comparisons, highlightedLine: 4 }),
+        meta: createStepMeta({
+          comparisons,
+          highlightedLine: 4,
+          highlightColor: STATE_COLORS.found,
+        }),
       });
       return steps;
     }
@@ -247,7 +255,11 @@ export function generateInsertSteps(root: BSTNode | null, value: number): Step<B
         id: stepId++,
         description: `${value} < ${current.value}, go left`,
         snapshot: { data: { root: bstToSnapshotNode(root, pathMap) } },
-        meta: createStepMeta({ comparisons, highlightedLine: 5 }),
+        meta: createStepMeta({
+          comparisons,
+          highlightedLine: 5,
+          highlightColor: STATE_COLORS.current,
+        }),
       });
 
       if (!current.left) {
@@ -263,7 +275,11 @@ export function generateInsertSteps(root: BSTNode | null, value: number): Step<B
           id: stepId++,
           description: `Found empty left slot. Inserting ${value}`,
           snapshot: { data: { root: bstToSnapshotNode(newRoot, insertMap) } },
-          meta: createStepMeta({ comparisons, highlightedLine: 6 }),
+          meta: createStepMeta({
+            comparisons,
+            highlightedLine: 6,
+            highlightColor: STATE_COLORS.inserting,
+          }),
         });
 
         const finalMap = new Map<number, NodeState>([[value, 'found']]);
@@ -271,7 +287,11 @@ export function generateInsertSteps(root: BSTNode | null, value: number): Step<B
           id: stepId++,
           description: `Successfully inserted ${value}`,
           snapshot: { data: { root: bstToSnapshotNode(newRoot, finalMap) } },
-          meta: createStepMeta({ comparisons, highlightedLine: 7 }),
+          meta: createStepMeta({
+            comparisons,
+            highlightedLine: 7,
+            highlightColor: STATE_COLORS.found,
+          }),
         });
 
         return steps;
@@ -282,7 +302,11 @@ export function generateInsertSteps(root: BSTNode | null, value: number): Step<B
         id: stepId++,
         description: `${value} > ${current.value}, go right`,
         snapshot: { data: { root: bstToSnapshotNode(root, pathMap) } },
-        meta: createStepMeta({ comparisons, highlightedLine: 5 }),
+        meta: createStepMeta({
+          comparisons,
+          highlightedLine: 5,
+          highlightColor: STATE_COLORS.current,
+        }),
       });
 
       if (!current.right) {
@@ -298,7 +322,11 @@ export function generateInsertSteps(root: BSTNode | null, value: number): Step<B
           id: stepId++,
           description: `Found empty right slot. Inserting ${value}`,
           snapshot: { data: { root: bstToSnapshotNode(newRoot, insertMap) } },
-          meta: createStepMeta({ comparisons, highlightedLine: 6 }),
+          meta: createStepMeta({
+            comparisons,
+            highlightedLine: 6,
+            highlightColor: STATE_COLORS.inserting,
+          }),
         });
 
         const finalMap = new Map<number, NodeState>([[value, 'found']]);
@@ -306,7 +334,11 @@ export function generateInsertSteps(root: BSTNode | null, value: number): Step<B
           id: stepId++,
           description: `Successfully inserted ${value}`,
           snapshot: { data: { root: bstToSnapshotNode(newRoot, finalMap) } },
-          meta: createStepMeta({ comparisons, highlightedLine: 7 }),
+          meta: createStepMeta({
+            comparisons,
+            highlightedLine: 7,
+            highlightColor: STATE_COLORS.found,
+          }),
         });
 
         return steps;
@@ -328,7 +360,7 @@ export function generateSearchSteps(root: BSTNode | null, value: number): Step<B
     id: stepId++,
     description: `Searching for value ${value}`,
     snapshot: { data: { root: bstToSnapshotNode(root, stateMap) } },
-    meta: createStepMeta({ comparisons, highlightedLine: 1 }),
+    meta: createStepMeta({ comparisons, highlightedLine: 1, highlightColor: STATE_COLORS.default }),
   });
 
   if (!root) {
@@ -336,7 +368,7 @@ export function generateSearchSteps(root: BSTNode | null, value: number): Step<B
       id: stepId++,
       description: `Tree is empty. Value ${value} not found.`,
       snapshot: { data: { root: null, message: 'Not found' } },
-      meta: createStepMeta({ comparisons, highlightedLine: 2 }),
+      meta: createStepMeta({ comparisons, highlightedLine: 2, highlightColor: STATE_COLORS.path }),
     });
     return steps;
   }
@@ -359,7 +391,11 @@ export function generateSearchSteps(root: BSTNode | null, value: number): Step<B
         snapshot: {
           data: { root: bstToSnapshotNode(root, pathMap), message: 'Found!' },
         },
-        meta: createStepMeta({ comparisons, highlightedLine: 3 }),
+        meta: createStepMeta({
+          comparisons,
+          highlightedLine: 3,
+          highlightColor: STATE_COLORS.found,
+        }),
       });
       return steps;
     }
@@ -369,7 +405,11 @@ export function generateSearchSteps(root: BSTNode | null, value: number): Step<B
         id: stepId++,
         description: `${value} < ${current.value}, go left`,
         snapshot: { data: { root: bstToSnapshotNode(root, pathMap) } },
-        meta: createStepMeta({ comparisons, highlightedLine: 4 }),
+        meta: createStepMeta({
+          comparisons,
+          highlightedLine: 4,
+          highlightColor: STATE_COLORS.current,
+        }),
       });
 
       if (!current.left) {
@@ -381,7 +421,11 @@ export function generateSearchSteps(root: BSTNode | null, value: number): Step<B
           snapshot: {
             data: { root: bstToSnapshotNode(root, notFoundMap), message: 'Not found' },
           },
-          meta: createStepMeta({ comparisons, highlightedLine: 5 }),
+          meta: createStepMeta({
+            comparisons,
+            highlightedLine: 5,
+            highlightColor: STATE_COLORS.path,
+          }),
         });
         return steps;
       }
@@ -391,7 +435,11 @@ export function generateSearchSteps(root: BSTNode | null, value: number): Step<B
         id: stepId++,
         description: `${value} > ${current.value}, go right`,
         snapshot: { data: { root: bstToSnapshotNode(root, pathMap) } },
-        meta: createStepMeta({ comparisons, highlightedLine: 4 }),
+        meta: createStepMeta({
+          comparisons,
+          highlightedLine: 4,
+          highlightColor: STATE_COLORS.current,
+        }),
       });
 
       if (!current.right) {
@@ -403,7 +451,11 @@ export function generateSearchSteps(root: BSTNode | null, value: number): Step<B
           snapshot: {
             data: { root: bstToSnapshotNode(root, notFoundMap), message: 'Not found' },
           },
-          meta: createStepMeta({ comparisons, highlightedLine: 5 }),
+          meta: createStepMeta({
+            comparisons,
+            highlightedLine: 5,
+            highlightColor: STATE_COLORS.path,
+          }),
         });
         return steps;
       }
@@ -423,7 +475,7 @@ export function generateInorderSteps(root: BSTNode | null): Step<BSTData>[] {
     id: stepId++,
     description: 'Starting inorder traversal (Left -> Root -> Right)',
     snapshot: { data: { root: bstToSnapshotNode(root) } },
-    meta: createStepMeta({ highlightedLine: 1 }),
+    meta: createStepMeta({ highlightedLine: 1, highlightColor: STATE_COLORS.default }),
   });
 
   if (!root) {
@@ -431,7 +483,7 @@ export function generateInorderSteps(root: BSTNode | null): Step<BSTData>[] {
       id: stepId++,
       description: 'Tree is empty. Nothing to traverse.',
       snapshot: { data: { root: null } },
-      meta: createStepMeta({ highlightedLine: 2 }),
+      meta: createStepMeta({ highlightedLine: 2, highlightColor: STATE_COLORS.default }),
     });
     return steps;
   }
@@ -453,7 +505,11 @@ export function generateInorderSteps(root: BSTNode | null): Step<BSTData>[] {
       id: stepId++,
       description: `Visit node ${node.value}. Inorder so far: [${visited.join(', ')}]`,
       snapshot: { data: { root: bstToSnapshotNode(root, stateMap) } },
-      meta: createStepMeta({ reads: visited.length, highlightedLine: 3 }),
+      meta: createStepMeta({
+        reads: visited.length,
+        highlightedLine: 3,
+        highlightColor: STATE_COLORS.current,
+      }),
     });
 
     // Visit right
@@ -469,7 +525,11 @@ export function generateInorderSteps(root: BSTNode | null): Step<BSTData>[] {
     id: stepId++,
     description: `Inorder traversal complete: [${visited.join(', ')}]`,
     snapshot: { data: { root: bstToSnapshotNode(root, finalMap) } },
-    meta: createStepMeta({ reads: visited.length, highlightedLine: 4 }),
+    meta: createStepMeta({
+      reads: visited.length,
+      highlightedLine: 4,
+      highlightColor: STATE_COLORS.visited,
+    }),
   });
 
   return steps;
@@ -540,7 +600,7 @@ function drawBST(
   height: number
 ): void {
   // Clear canvas with dark background
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   if (!data.root) {

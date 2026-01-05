@@ -16,7 +16,7 @@ import type {
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
-import { CANVAS_PADDING } from '../core/constants';
+import { CANVAS_PADDING, CANVAS_BACKGROUND_COLOR } from '../core/constants';
 
 // =============================================================================
 // Types
@@ -192,7 +192,7 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
     id: stepId++,
     description: `Inserting value: ${value}`,
     snapshot: { data: cloneAVL(workingAVL) },
-    meta: createStepMeta({ highlightedLine: 0 }),
+    meta: createStepMeta({ highlightedLine: 0, highlightColor: NODE_STATE_COLORS.default }),
   });
 
   function insertHelper(node: AVLNodeData | null, val: number): AVLNodeData {
@@ -210,7 +210,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
             values: workingAVL.values,
           },
         },
-        meta: createStepMeta({ highlightedLine: 1, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 1,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.inserted,
+        }),
       });
 
       return newNode;
@@ -223,7 +227,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
       id: stepId++,
       description: `Comparing ${val} with ${node.value}`,
       snapshot: { data: cloneAVL(workingAVL) },
-      meta: createStepMeta({ highlightedLine: 2, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 2,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.comparing,
+      }),
     });
 
     if (val < node.value) {
@@ -239,7 +247,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
         id: stepId++,
         description: `Value ${val} already exists in tree`,
         snapshot: { data: cloneAVL(workingAVL) },
-        meta: createStepMeta({ highlightedLine: 3, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 3,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.found,
+        }),
       });
       return node;
     }
@@ -260,7 +272,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
         id: stepId++,
         description: `Left-Left case at ${node.value}. Performing right rotation.`,
         snapshot: { data: cloneAVL(workingAVL) },
-        meta: createStepMeta({ highlightedLine: 4, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 4,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.rotatingRight,
+        }),
       });
 
       const newRoot = rotateRight(node);
@@ -276,7 +292,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
             lastRotation: 'Right rotation',
           },
         },
-        meta: createStepMeta({ highlightedLine: 5, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 5,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.balanced,
+        }),
       });
 
       return newRoot;
@@ -291,7 +311,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
         id: stepId++,
         description: `Right-Right case at ${node.value}. Performing left rotation.`,
         snapshot: { data: cloneAVL(workingAVL) },
-        meta: createStepMeta({ highlightedLine: 4, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 4,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.rotatingLeft,
+        }),
       });
 
       const newRoot = rotateLeft(node);
@@ -307,7 +331,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
             lastRotation: 'Left rotation',
           },
         },
-        meta: createStepMeta({ highlightedLine: 5, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 5,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.balanced,
+        }),
       });
 
       return newRoot;
@@ -322,7 +350,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
         id: stepId++,
         description: `Left-Right case at ${node.value}. First: left rotate at ${node.left.value}`,
         snapshot: { data: cloneAVL(workingAVL) },
-        meta: createStepMeta({ highlightedLine: 4, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 4,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.rotatingLeft,
+        }),
       });
 
       node.left = rotateLeft(node.left);
@@ -332,7 +364,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
         id: stepId++,
         description: `Now: right rotate at ${node.value}`,
         snapshot: { data: cloneAVL(workingAVL) },
-        meta: createStepMeta({ highlightedLine: 5, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 5,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.rotatingRight,
+        }),
       });
 
       const newRoot = rotateRight(node);
@@ -348,7 +384,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
             lastRotation: 'Left-Right rotation',
           },
         },
-        meta: createStepMeta({ highlightedLine: 6, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 6,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.balanced,
+        }),
       });
 
       return newRoot;
@@ -363,7 +403,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
         id: stepId++,
         description: `Right-Left case at ${node.value}. First: right rotate at ${node.right.value}`,
         snapshot: { data: cloneAVL(workingAVL) },
-        meta: createStepMeta({ highlightedLine: 4, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 4,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.rotatingRight,
+        }),
       });
 
       node.right = rotateRight(node.right);
@@ -373,7 +417,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
         id: stepId++,
         description: `Now: left rotate at ${node.value}`,
         snapshot: { data: cloneAVL(workingAVL) },
-        meta: createStepMeta({ highlightedLine: 5, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 5,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.rotatingLeft,
+        }),
       });
 
       const newRoot = rotateLeft(node);
@@ -389,7 +437,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
             lastRotation: 'Right-Left rotation',
           },
         },
-        meta: createStepMeta({ highlightedLine: 6, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 6,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.balanced,
+        }),
       });
 
       return newRoot;
@@ -416,7 +468,11 @@ export function generateInsertSteps(avl: AVLData, value: number): Step<AVLData>[
     id: stepId++,
     description: `Insertion complete. Tree is balanced.`,
     snapshot: { data: cloneAVL(workingAVL) },
-    meta: createStepMeta({ highlightedLine: 7, comparisons }),
+    meta: createStepMeta({
+      highlightedLine: 7,
+      comparisons,
+      highlightColor: NODE_STATE_COLORS.balanced,
+    }),
   });
 
   return steps;
@@ -436,7 +492,7 @@ export function generateSearchSteps(avl: AVLData, value: number): Step<AVLData>[
     id: stepId++,
     description: `Searching for value: ${value}`,
     snapshot: { data: cloneAVL(workingAVL) },
-    meta: createStepMeta({ highlightedLine: 0 }),
+    meta: createStepMeta({ highlightedLine: 0, highlightColor: NODE_STATE_COLORS.default }),
   });
 
   let current = workingAVL.root;
@@ -449,7 +505,11 @@ export function generateSearchSteps(avl: AVLData, value: number): Step<AVLData>[
       id: stepId++,
       description: `Comparing ${value} with ${current.value}`,
       snapshot: { data: cloneAVL(workingAVL) },
-      meta: createStepMeta({ highlightedLine: 1, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 1,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.comparing,
+      }),
     });
 
     if (value === current.value) {
@@ -459,7 +519,11 @@ export function generateSearchSteps(avl: AVLData, value: number): Step<AVLData>[
         id: stepId++,
         description: `Found ${value}!`,
         snapshot: { data: cloneAVL(workingAVL) },
-        meta: createStepMeta({ highlightedLine: 2, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 2,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.found,
+        }),
       });
 
       return steps;
@@ -472,7 +536,11 @@ export function generateSearchSteps(avl: AVLData, value: number): Step<AVLData>[
         id: stepId++,
         description: `${value} < ${current.value}, going left`,
         snapshot: { data: cloneAVL(workingAVL) },
-        meta: createStepMeta({ highlightedLine: 3, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 3,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.current,
+        }),
       });
       current = current.left;
     } else {
@@ -480,7 +548,11 @@ export function generateSearchSteps(avl: AVLData, value: number): Step<AVLData>[
         id: stepId++,
         description: `${value} > ${current.value}, going right`,
         snapshot: { data: cloneAVL(workingAVL) },
-        meta: createStepMeta({ highlightedLine: 4, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 4,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.current,
+        }),
       });
       current = current.right;
     }
@@ -490,7 +562,11 @@ export function generateSearchSteps(avl: AVLData, value: number): Step<AVLData>[
     id: stepId++,
     description: `Value ${value} not found in tree`,
     snapshot: { data: cloneAVL(workingAVL) },
-    meta: createStepMeta({ highlightedLine: 5, comparisons }),
+    meta: createStepMeta({
+      highlightedLine: 5,
+      comparisons,
+      highlightColor: NODE_STATE_COLORS.notFound,
+    }),
   });
 
   return steps;
@@ -570,7 +646,7 @@ function drawAVL(
   width: number,
   height: number
 ): void {
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   // Title

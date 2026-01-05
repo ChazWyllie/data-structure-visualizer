@@ -16,7 +16,7 @@ import type {
 } from '../core/types';
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
-import { CANVAS_PADDING } from '../core/constants';
+import { CANVAS_PADDING, CANVAS_BACKGROUND_COLOR } from '../core/constants';
 
 // =============================================================================
 // Types
@@ -133,7 +133,12 @@ export function generateInsertSteps(
         loadFactor: calculateLoadFactor(workingSize, capacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 1, reads, writes }),
+    meta: createStepMeta({
+      highlightedLine: 1,
+      reads,
+      writes,
+      highlightColor: STATE_COLORS.default,
+    }),
   });
 
   // Calculate hash
@@ -151,7 +156,12 @@ export function generateInsertSteps(
         loadFactor: calculateLoadFactor(workingSize, capacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 2, reads: ++reads, writes }),
+    meta: createStepMeta({
+      highlightedLine: 2,
+      reads: ++reads,
+      writes,
+      highlightColor: STATE_COLORS.hashing,
+    }),
   });
 
   // Check for existing key
@@ -172,7 +182,12 @@ export function generateInsertSteps(
           loadFactor: calculateLoadFactor(workingSize, capacity),
         },
       },
-      meta: createStepMeta({ highlightedLine: 3, reads: ++reads, writes }),
+      meta: createStepMeta({
+        highlightedLine: 3,
+        reads: ++reads,
+        writes,
+        highlightColor: STATE_COLORS.found,
+      }),
     });
 
     workingBuckets[hashValue].entries[existingIndex].value = value;
@@ -190,7 +205,12 @@ export function generateInsertSteps(
           loadFactor: calculateLoadFactor(workingSize, capacity),
         },
       },
-      meta: createStepMeta({ highlightedLine: 4, reads, writes }),
+      meta: createStepMeta({
+        highlightedLine: 4,
+        reads,
+        writes,
+        highlightColor: STATE_COLORS.inserted,
+      }),
     });
   } else {
     // Check for collision
@@ -209,7 +229,12 @@ export function generateInsertSteps(
             loadFactor: calculateLoadFactor(workingSize, capacity),
           },
         },
-        meta: createStepMeta({ highlightedLine: 5, reads, writes }),
+        meta: createStepMeta({
+          highlightedLine: 5,
+          reads,
+          writes,
+          highlightColor: STATE_COLORS.collision,
+        }),
       });
     }
 
@@ -230,7 +255,12 @@ export function generateInsertSteps(
           loadFactor: calculateLoadFactor(workingSize, capacity),
         },
       },
-      meta: createStepMeta({ highlightedLine: 6, reads, writes }),
+      meta: createStepMeta({
+        highlightedLine: 6,
+        reads,
+        writes,
+        highlightColor: STATE_COLORS.inserted,
+      }),
     });
   }
 
@@ -248,7 +278,12 @@ export function generateInsertSteps(
           loadFactor: newLoadFactor,
         },
       },
-      meta: createStepMeta({ highlightedLine: 7, reads, writes }),
+      meta: createStepMeta({
+        highlightedLine: 7,
+        reads,
+        writes,
+        highlightColor: STATE_COLORS.collision,
+      }),
     });
   }
 
@@ -270,7 +305,12 @@ export function generateInsertSteps(
         loadFactor: newLoadFactor,
       },
     },
-    meta: createStepMeta({ highlightedLine: 8, reads, writes }),
+    meta: createStepMeta({
+      highlightedLine: 8,
+      reads,
+      writes,
+      highlightColor: STATE_COLORS.inserted,
+    }),
   });
 
   return steps;
@@ -299,7 +339,7 @@ export function generateLookupSteps(
         loadFactor: calculateLoadFactor(size, capacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 1, reads }),
+    meta: createStepMeta({ highlightedLine: 1, reads, highlightColor: STATE_COLORS.default }),
   });
 
   // Calculate hash
@@ -318,7 +358,7 @@ export function generateLookupSteps(
         loadFactor: calculateLoadFactor(size, capacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 2, reads }),
+    meta: createStepMeta({ highlightedLine: 2, reads, highlightColor: STATE_COLORS.hashing }),
   });
 
   // Search chain
@@ -336,7 +376,7 @@ export function generateLookupSteps(
           loadFactor: calculateLoadFactor(size, capacity),
         },
       },
-      meta: createStepMeta({ highlightedLine: 3, reads }),
+      meta: createStepMeta({ highlightedLine: 3, reads, highlightColor: STATE_COLORS.deleted }),
     });
     return steps;
   }
@@ -356,7 +396,7 @@ export function generateLookupSteps(
           loadFactor: calculateLoadFactor(size, capacity),
         },
       },
-      meta: createStepMeta({ highlightedLine: 4, reads }),
+      meta: createStepMeta({ highlightedLine: 4, reads, highlightColor: STATE_COLORS.hashing }),
     });
 
     if (bucket.entries[i].key === key) {
@@ -373,7 +413,7 @@ export function generateLookupSteps(
             loadFactor: calculateLoadFactor(size, capacity),
           },
         },
-        meta: createStepMeta({ highlightedLine: 5, reads }),
+        meta: createStepMeta({ highlightedLine: 5, reads, highlightColor: STATE_COLORS.found }),
       });
       return steps;
     }
@@ -393,7 +433,7 @@ export function generateLookupSteps(
         loadFactor: calculateLoadFactor(size, capacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 6, reads }),
+    meta: createStepMeta({ highlightedLine: 6, reads, highlightColor: STATE_COLORS.deleted }),
   });
 
   return steps;
@@ -424,7 +464,12 @@ export function generateDeleteSteps(
         loadFactor: calculateLoadFactor(workingSize, capacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 1, reads, writes }),
+    meta: createStepMeta({
+      highlightedLine: 1,
+      reads,
+      writes,
+      highlightColor: STATE_COLORS.default,
+    }),
   });
 
   // Calculate hash
@@ -443,7 +488,12 @@ export function generateDeleteSteps(
         loadFactor: calculateLoadFactor(workingSize, capacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 2, reads, writes }),
+    meta: createStepMeta({
+      highlightedLine: 2,
+      reads,
+      writes,
+      highlightColor: STATE_COLORS.hashing,
+    }),
   });
 
   // Find entry
@@ -462,7 +512,12 @@ export function generateDeleteSteps(
           loadFactor: calculateLoadFactor(workingSize, capacity),
         },
       },
-      meta: createStepMeta({ highlightedLine: 3, reads, writes }),
+      meta: createStepMeta({
+        highlightedLine: 3,
+        reads,
+        writes,
+        highlightColor: STATE_COLORS.deleted,
+      }),
     });
     return steps;
   }
@@ -482,7 +537,7 @@ export function generateDeleteSteps(
         loadFactor: calculateLoadFactor(workingSize, capacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 4, reads, writes }),
+    meta: createStepMeta({ highlightedLine: 4, reads, writes, highlightColor: STATE_COLORS.found }),
   });
 
   // Remove
@@ -501,7 +556,12 @@ export function generateDeleteSteps(
         loadFactor: calculateLoadFactor(workingSize, capacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 5, reads, writes }),
+    meta: createStepMeta({
+      highlightedLine: 5,
+      reads,
+      writes,
+      highlightColor: STATE_COLORS.deleted,
+    }),
   });
 
   // Reset states
@@ -521,7 +581,12 @@ export function generateDeleteSteps(
         loadFactor: calculateLoadFactor(workingSize, capacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 6, reads, writes }),
+    meta: createStepMeta({
+      highlightedLine: 6,
+      reads,
+      writes,
+      highlightColor: STATE_COLORS.deleted,
+    }),
   });
 
   return steps;
@@ -550,7 +615,12 @@ export function generateResizeSteps(
         loadFactor: calculateLoadFactor(size, capacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 1, reads, writes }),
+    meta: createStepMeta({
+      highlightedLine: 1,
+      reads,
+      writes,
+      highlightColor: STATE_COLORS.default,
+    }),
   });
 
   // Create new table
@@ -568,7 +638,12 @@ export function generateResizeSteps(
         loadFactor: 0,
       },
     },
-    meta: createStepMeta({ highlightedLine: 2, reads, writes }),
+    meta: createStepMeta({
+      highlightedLine: 2,
+      reads,
+      writes,
+      highlightColor: STATE_COLORS.default,
+    }),
   });
 
   // Rehash all entries
@@ -595,7 +670,12 @@ export function generateResizeSteps(
             loadFactor: calculateLoadFactor(rehashCount, newCapacity),
           },
         },
-        meta: createStepMeta({ highlightedLine: 3, reads, writes }),
+        meta: createStepMeta({
+          highlightedLine: 3,
+          reads,
+          writes,
+          highlightColor: STATE_COLORS.hashing,
+        }),
       });
 
       newBuckets[newHash].state = 'default';
@@ -615,7 +695,12 @@ export function generateResizeSteps(
         loadFactor: calculateLoadFactor(size, newCapacity),
       },
     },
-    meta: createStepMeta({ highlightedLine: 4, reads, writes }),
+    meta: createStepMeta({
+      highlightedLine: 4,
+      reads,
+      writes,
+      highlightColor: STATE_COLORS.inserted,
+    }),
   });
 
   return steps;
@@ -634,7 +719,7 @@ function drawHashTable(
   const { buckets, size, capacity, loadFactor } = data;
 
   // Clear
-  ctx.fillStyle = '#0a0a0a';
+  ctx.fillStyle = CANVAS_BACKGROUND_COLOR;
   ctx.fillRect(0, 0, width, height);
 
   // Title and stats
@@ -816,7 +901,10 @@ class HashTableVisualizer implements Visualizer<HashTableData> {
                 loadFactor: 0,
               },
             },
-            meta: createStepMeta({ writes: DEFAULT_CAPACITY }),
+            meta: createStepMeta({
+              writes: DEFAULT_CAPACITY,
+              highlightColor: STATE_COLORS.default,
+            }),
           },
         ];
       }
@@ -828,7 +916,7 @@ class HashTableVisualizer implements Visualizer<HashTableData> {
             snapshot: {
               data: { buckets, size, capacity, loadFactor: calculateLoadFactor(size, capacity) },
             },
-            meta: createStepMeta({}),
+            meta: createStepMeta({ highlightColor: STATE_COLORS.default }),
           },
         ];
     }

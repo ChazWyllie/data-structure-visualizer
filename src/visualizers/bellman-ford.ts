@@ -18,7 +18,7 @@ import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
 import { CANVAS_PADDING } from '../core/constants';
 import type { GraphData, GraphNode, GraphEdge } from './graph-shared';
-import { cloneGraph, drawGraph, NODE_STATE_COLORS } from './graph-shared';
+import { cloneGraph, drawGraph, NODE_STATE_COLORS, EDGE_STATE_COLORS } from './graph-shared';
 
 // =============================================================================
 // Types
@@ -145,7 +145,7 @@ export function generateBellmanFordSteps(
         sourceNode: sourceId,
       },
     },
-    meta: createStepMeta({ highlightedLine: 0 }),
+    meta: createStepMeta({ highlightedLine: 0, highlightColor: NODE_STATE_COLORS.current }),
   });
 
   const distStr = Array.from(distances.entries())
@@ -165,7 +165,7 @@ export function generateBellmanFordSteps(
         sourceNode: sourceId,
       },
     },
-    meta: createStepMeta({ highlightedLine: 1 }),
+    meta: createStepMeta({ highlightedLine: 1, highlightColor: NODE_STATE_COLORS.current }),
   });
 
   // Main loop: V-1 iterations
@@ -187,7 +187,11 @@ export function generateBellmanFordSteps(
           sourceNode: sourceId,
         },
       },
-      meta: createStepMeta({ highlightedLine: 2, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 2,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.current,
+      }),
     });
 
     // Relax all edges
@@ -242,7 +246,11 @@ export function generateBellmanFordSteps(
               sourceNode: sourceId,
             },
           },
-          meta: createStepMeta({ highlightedLine: 3, comparisons }),
+          meta: createStepMeta({
+            highlightedLine: 3,
+            comparisons,
+            highlightColor: EDGE_STATE_COLORS.considering,
+          }),
         });
       }
 
@@ -273,7 +281,11 @@ export function generateBellmanFordSteps(
             sourceNode: sourceId,
           },
         },
-        meta: createStepMeta({ highlightedLine: 4, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 4,
+          comparisons,
+          highlightColor: NODE_STATE_COLORS.inMST,
+        }),
       });
       break;
     }
@@ -295,7 +307,11 @@ export function generateBellmanFordSteps(
         sourceNode: sourceId,
       },
     },
-    meta: createStepMeta({ highlightedLine: 5, comparisons }),
+    meta: createStepMeta({
+      highlightedLine: 5,
+      comparisons,
+      highlightColor: NODE_STATE_COLORS.frontier,
+    }),
   });
 
   for (const edge of workingGraph.edges) {
@@ -327,7 +343,11 @@ export function generateBellmanFordSteps(
             sourceNode: sourceId,
           },
         },
-        meta: createStepMeta({ highlightedLine: 6, comparisons }),
+        meta: createStepMeta({
+          highlightedLine: 6,
+          comparisons,
+          highlightColor: EDGE_STATE_COLORS.rejected,
+        }),
       });
       break;
     }
@@ -366,7 +386,11 @@ export function generateBellmanFordSteps(
           sourceNode: sourceId,
         },
       },
-      meta: createStepMeta({ highlightedLine: 7, comparisons }),
+      meta: createStepMeta({
+        highlightedLine: 7,
+        comparisons,
+        highlightColor: NODE_STATE_COLORS.inMST,
+      }),
     });
   }
 
@@ -494,7 +518,7 @@ class BellmanFordVisualizer implements Visualizer<BellmanFordData> {
                 sourceNode: 'A',
               },
             },
-            meta: createStepMeta({}),
+            meta: createStepMeta({ highlightColor: NODE_STATE_COLORS.default }),
           },
         ];
       }

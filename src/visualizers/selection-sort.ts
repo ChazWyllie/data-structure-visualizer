@@ -17,7 +17,7 @@ import type {
 import { createStepMeta } from '../core/types';
 import { registry } from '../core/registry';
 import type { SortingData } from './sorting-shared';
-import { drawArrayBars, generateRandomArray } from './sorting-shared';
+import { drawArrayBars, generateRandomArray, STATE_COLORS } from './sorting-shared';
 
 export function generateSelectionSortSteps(arr: number[]): Step<SortingData>[] {
   const steps: Step<SortingData>[] = [];
@@ -30,7 +30,12 @@ export function generateSelectionSortSteps(arr: number[]): Step<SortingData>[] {
     id: stepId++,
     description: 'Initial array state',
     snapshot: { data: { elements: elements.map((e) => ({ ...e })) } },
-    meta: createStepMeta({ highlightedLine: 1 }),
+    meta: createStepMeta({
+      reads: 0,
+      writes: 0,
+      highlightedLine: 1,
+      highlightColor: STATE_COLORS.default,
+    }),
   });
 
   const n = elements.length;
@@ -47,7 +52,14 @@ export function generateSelectionSortSteps(arr: number[]): Step<SortingData>[] {
       id: stepId++,
       description: `Finding minimum element from index ${i} to ${n - 1}`,
       snapshot: { data: { elements: startElements } },
-      meta: createStepMeta({ comparisons, swaps, highlightedLine: 2 }),
+      meta: createStepMeta({
+        comparisons,
+        swaps,
+        reads: comparisons * 2,
+        writes: swaps * 2,
+        highlightedLine: 2,
+        highlightColor: STATE_COLORS.active,
+      }),
     });
 
     for (let j = i + 1; j < n; j++) {
@@ -66,7 +78,14 @@ export function generateSelectionSortSteps(arr: number[]): Step<SortingData>[] {
         id: stepId++,
         description: `Comparing element at ${j} (${elements[j].value}) with current min at ${minIdx} (${elements[minIdx].value})`,
         snapshot: { data: { elements: comparingElements } },
-        meta: createStepMeta({ comparisons, swaps, highlightedLine: 3 }),
+        meta: createStepMeta({
+          comparisons,
+          swaps,
+          reads: comparisons * 2,
+          writes: swaps * 2,
+          highlightedLine: 3,
+          highlightColor: STATE_COLORS.comparing,
+        }),
         activeIndices: [minIdx, j],
       });
 
@@ -80,7 +99,14 @@ export function generateSelectionSortSteps(arr: number[]): Step<SortingData>[] {
           id: stepId++,
           description: `New minimum found: ${elements[minIdx].value} at index ${minIdx}`,
           snapshot: { data: { elements: newMinElements } },
-          meta: createStepMeta({ comparisons, swaps, highlightedLine: 4 }),
+          meta: createStepMeta({
+            comparisons,
+            swaps,
+            reads: comparisons * 2,
+            writes: swaps * 2,
+            highlightedLine: 4,
+            highlightColor: STATE_COLORS.pivot,
+          }),
         });
       }
     }
@@ -99,7 +125,14 @@ export function generateSelectionSortSteps(arr: number[]): Step<SortingData>[] {
         id: stepId++,
         description: `Swapping ${elements[i].value} at index ${i} with ${elements[minIdx].value} at index ${minIdx}`,
         snapshot: { data: { elements: swappingElements } },
-        meta: createStepMeta({ comparisons, swaps, highlightedLine: 5 }),
+        meta: createStepMeta({
+          comparisons,
+          swaps,
+          reads: comparisons * 2,
+          writes: swaps * 2,
+          highlightedLine: 5,
+          highlightColor: STATE_COLORS.swapping,
+        }),
         modifiedIndices: [i, minIdx],
       });
 
@@ -120,7 +153,14 @@ export function generateSelectionSortSteps(arr: number[]): Step<SortingData>[] {
     snapshot: {
       data: { elements: elements.map((e) => ({ ...e, state: 'sorted' as ElementState })) },
     },
-    meta: createStepMeta({ comparisons, swaps, highlightedLine: 6 }),
+    meta: createStepMeta({
+      comparisons,
+      swaps,
+      reads: comparisons * 2,
+      writes: swaps * 2,
+      highlightedLine: 6,
+      highlightColor: STATE_COLORS.sorted,
+    }),
   });
 
   return steps;
@@ -156,7 +196,7 @@ class SelectionSortVisualizer implements Visualizer<SortingData> {
           id: 0,
           description: 'Generated new random array',
           snapshot: { data: this.currentData },
-          meta: createStepMeta({ highlightedLine: 1 }),
+          meta: createStepMeta({ reads: 0, writes: 0, highlightedLine: 1 }),
         },
       ];
     }

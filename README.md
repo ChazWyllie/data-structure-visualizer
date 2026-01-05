@@ -28,11 +28,27 @@ An interactive, portfolio-quality data structure and algorithm visualizer built 
 
 | Category | Visualizer | Description |
 |----------|------------|-------------|
-| Sorting | **Bubble Sort** | Classic O(n²) comparison sort with swap visualization |
-| Data Structures | **Stack** | LIFO with push/pop operations and overflow detection |
-| Data Structures | **Queue** | FIFO with enqueue/dequeue operations |
-| Data Structures | **Linked List** | Singly linked list with insert/delete-by-value |
-| Demo | **Array Demo** | Simple array traversal for testing |
+| **Sorting** | Bubble Sort | Classic O(n^2) comparison sort with swap visualization |
+| | Selection Sort | O(n^2) find-minimum-and-swap algorithm |
+| | Insertion Sort | O(n^2) build-sorted-portion algorithm |
+| | Merge Sort | O(n log n) divide and conquer with auxiliary array |
+| | Quick Sort | O(n log n) partition-based sorting with pivot selection |
+| | Heap Sort | O(n log n) heap-based extraction algorithm |
+| **Data Structures** | Stack | LIFO with push/pop operations and overflow detection |
+| | Queue | FIFO with enqueue/dequeue operations |
+| | Linked List | Singly linked list with insert/delete-by-value |
+| | Binary Search Tree | Insert, search, inorder traversal with tree visualization |
+| | AVL Tree | Self-balancing BST with rotation visualization |
+| | Heap | Min/Max heap with array and tree representation |
+| | Hash Table | Chaining-based hash table with collision handling |
+| | Trie | Prefix tree for string operations |
+| | Union-Find | Disjoint set union with path compression |
+| **Graph** | Dijkstra | Shortest path with priority queue visualization |
+| | A* | Heuristic-based pathfinding algorithm |
+| | Bellman-Ford | Shortest path with negative edge support |
+| | Prim's MST | Minimum spanning tree via greedy edge selection |
+| | Kruskal's MST | Minimum spanning tree via sorted edges |
+| | Topological Sort | DAG ordering with DFS |
 
 ---
 
@@ -317,24 +333,27 @@ To use a custom domain:
 
 ## Roadmap (V2)
 
-### Implemented Visualizers
+### Implemented (21 Visualizers)
 
-- [x] **Binary Search Tree (BST)** — Insert, search, inorder traversal with tree visualization
-- [x] **Bubble Sort** — Classic O(n²) comparison sort with swap visualization
-- [x] **Selection Sort** — O(n²) find-minimum-and-swap algorithm
-- [x] **Insertion Sort** — O(n²) build-sorted-portion algorithm
-- [x] **Merge Sort** — O(n log n) divide and conquer with auxiliary array
-- [x] **Quick Sort** — O(n log n) partition-based sorting with pivot selection
-- [x] **Heap Sort** — O(n log n) heap-based extraction algorithm
-- [x] **Stack** — LIFO with push/pop operations and overflow detection
-- [x] **Queue** — FIFO with enqueue/dequeue operations
-- [x] **Linked List** — Singly linked list with insert/delete-by-value
+**Sorting Algorithms:**
+- [x] Bubble Sort, Selection Sort, Insertion Sort
+- [x] Merge Sort, Quick Sort, Heap Sort
+
+**Data Structures:**
+- [x] Stack, Queue, Linked List
+- [x] Binary Search Tree, AVL Tree
+- [x] Heap (Min/Max), Hash Table, Trie, Union-Find
+
+**Graph Algorithms:**
+- [x] Dijkstra, A*, Bellman-Ford
+- [x] Prim's MST, Kruskal's MST
+- [x] Topological Sort
 
 ### Planned Visualizers
 
 - [ ] **Graph BFS** — Breadth-first search with queue visualization
 - [ ] **Graph DFS** — Depth-first search with stack/recursion visualization
-- [ ] **Dijkstra's Algorithm** — Shortest path with priority queue
+- [ ] **Red-Black Tree** — Self-balancing BST with color properties
 
 ### Implemented Features
 
