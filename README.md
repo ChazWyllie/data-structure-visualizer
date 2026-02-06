@@ -9,9 +9,6 @@ An interactive, portfolio-quality data structure and algorithm visualizer built 
 
 **[Live Demo](https://chazwyllie.github.io/data-structure-visualizer/)**
 
-![Data Structure Visualizer Screenshot](./docs/screenshot.png)
-<!-- TODO: Add actual screenshot -->
-
 ---
 
 ## Features
