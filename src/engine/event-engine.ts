@@ -11,7 +11,7 @@
 
 import type { Step, EngineEvent, EngineListener, StepMeta } from '../core/types';
 import { createStepMeta } from '../core/types';
-import type { BaseEvent, BaseModelState, Reducer } from '../core/events';
+import type { BaseEvent, BaseModelState, Reducer } from '../core/events/generic';
 import { STATE_CACHE_INTERVAL } from '../core/events';
 import { DEFAULT_ANIMATION_SPEED_MS } from '../core/constants';
 

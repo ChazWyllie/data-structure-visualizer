@@ -6,17 +6,16 @@
  */
 
 import type {
+  InitStackEvent,
+  PopEvent,
+  PushEvent,
+  StackClearEvent,
   StackEvent,
   StackModelState,
-  PushEvent,
-  PopEvent,
   StackOverflowEvent,
   StackUnderflowEvent,
-  StackClearEvent,
-  InitStackEvent,
-  MessageEvent,
-  CompleteEvent,
-} from '../core/events';
+} from '../core/events/stack';
+import type { CompleteEvent, MessageEvent } from '../core/events/generic';
 
 // =============================================================================
 // Initial State Factory
