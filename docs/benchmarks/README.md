@@ -1,19 +1,19 @@
 # Benchmark Metrics
 
-This directory tracks agentic workflow performance over time through repeatable benchmark runs.
+This directory tracks workflow performance over time through repeatable benchmark runs.
 
 ---
 
 ## Purpose
 
-Measure and improve the efficiency of AI-assisted development by tracking key metrics across standardized tasks.
+Measure and improve the efficiency of development by tracking key metrics across standardized tasks.
 
 ## Metrics Captured
 
 | Metric | Description |
 |--------|-------------|
 | **Time to First PR** | Duration from task start to opening a PR (manual entry) |
-| **Agent Iterations** | Number of agent tool calls or conversation turns |
+| **Iteration Count** | Number of workflow cycles or review passes |
 | **Rework Loops** | Times work was undone and redone |
 | **Defects Found (Self)** | Bugs caught before PR submission |
 | **Defects Found (Review)** | Bugs caught during code review |
@@ -53,7 +53,7 @@ npm run check
 2. Select a task (A, B, C, or D)
 3. Create a branch: `git checkout -b benchmark/YYYY-MM-DD-task-X`
 4. Start timer and begin work
-5. Track iterations and rework as you go
+5. Track iteration counts and rework as you go
 
 ### 3. Record
 
@@ -74,7 +74,7 @@ Run benchmarks monthly to track improvement:
 ### Trend Analysis
 
 Compare month-over-month:
-- Are iterations decreasing?
+- Are iteration counts decreasing?
 - Is rework reducing?
 - Are defects shifting left (caught earlier)?
 
@@ -97,6 +97,6 @@ docs/benchmarks/
 ## Tips for Better Benchmarks
 
 1. **Be consistent** - Use the same task definition each time
-2. **Be honest** - Record actual iterations, not ideal
+2. **Be honest** - Record actual iteration counts, not ideal
 3. **Capture context** - Note any unusual conditions
 4. **Review trends** - Single runs are noisy; patterns matter

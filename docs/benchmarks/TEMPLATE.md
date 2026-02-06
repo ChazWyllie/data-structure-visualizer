@@ -7,7 +7,6 @@
 | Date | YYYY-MM-DD |
 | Task | A / B / C / D |
 | Description | [Brief description of the specific task] |
-| Operator | human / agent / hybrid |
 | Branch | `benchmark/YYYY-MM-DD-task-X` |
 
 ---
@@ -27,7 +26,7 @@
 | Start Time | HH:MM | |
 | End Time | HH:MM | |
 | **Total Duration** | __ min | |
-| **Agent Iterations** | | Tool calls or conversation turns |
+| **Iteration Count** | | Workflow cycles or review passes |
 | **Rework Loops** | | Times work was undone/redone |
 | **Defects Found (Self)** | | Caught before PR |
 | **Defects Found (Review)** | | Caught during review |
@@ -86,7 +85,7 @@
 | Metric | This Run | Previous | Delta |
 |--------|----------|----------|-------|
 | Duration | | | |
-| Iterations | | | |
+| Iteration Count | | | |
 | Rework | | | |
 | Defects | | | |
 
