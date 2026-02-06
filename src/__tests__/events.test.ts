@@ -22,7 +22,8 @@ import {
   isEmpty,
   isFull,
 } from '../visualizers/stack.events';
-import type { ArrayEvent, StackEvent } from '../core/events';
+import type { ArrayEvent } from '../core/events/array';
+import type { StackEvent } from '../core/events/stack';
 
 // =============================================================================
 // Bubble Sort Event Tests

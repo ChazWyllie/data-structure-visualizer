@@ -9,12 +9,12 @@ import type {
   ArrayEvent,
   ArrayModelState,
   CompareEvent,
-  SwapEvent,
+  InitArrayEvent,
   MarkSortedEvent,
   PassStartEvent,
-  InitArrayEvent,
-  CompleteEvent,
-} from '../core/events';
+  SwapEvent,
+} from '../core/events/array';
+import type { CompleteEvent } from '../core/events/generic';
 
 // =============================================================================
 // Initial State Factory
