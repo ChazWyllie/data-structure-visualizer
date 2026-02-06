@@ -6,7 +6,7 @@ import readline from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
 
 const url = process.argv[2] || "http://localhost:3000/data-structure-visualizer/";
-const outDir = path.resolve("artifacts");
+const outDir = path.resolve(".local", "artifacts");
 fs.mkdirSync(outDir, { recursive: true });
 
 const ts = new Date().toISOString().replaceAll(":", "-");
