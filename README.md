@@ -164,40 +164,6 @@ Test files are in `src/__tests__/`:
 
 ---
 
-## Agent Workflow
-
-This project supports AI-assisted development with structured workflows.
-
-### Workflow Overview
-
-```
-Spec → Diff → Test → Review
-```
-
-1. **Spec** — Write a feature spec before implementation (`prompts/templates/feature-spec.md`)
-2. **Diff** — Make small, focused changes (< 100 lines per file)
-3. **Test** — Run `npm run check` after every change
-4. **Review** — Fill out PR contract with verification checklist
-
-### Key Files
-
-| File | Purpose |
-|------|---------|
-| `prompts/PLAYBOOK.md` | Core rules for AI-assisted development |
-| `prompts/templates/feature-spec.md` | Feature specification template |
-| `prompts/templates/pr-contract.md` | PR description template |
-| `prompts/specs/` | Active and completed specifications |
-| `docs/engineering-log/` | Decision logs and session notes |
-
-### Rules of Engagement
-
-- **Small diffs**: Touch only files explicitly listed in the spec
-- **List before edit**: Always read files before modifying
-- **Test always**: Run `npm run check` before and after changes
-- **Document risks**: Identify top 3 plausible regressions for each change
-
----
-
 ## Quality Gates
 
 The project enforces code quality at multiple levels to prevent low-quality output.
@@ -247,65 +213,6 @@ git commit --no-verify -m "emergency fix"
 # Remember to run checks manually after:
 npm run check
 ```
-
----
-
-## Benchmarking
-
-Track agentic workflow performance with repeatable benchmark tasks.
-
-### Quick Start
-
-```bash
-# Capture environment info before a benchmark run
-npm run benchmark:env
-
-# Example output:
-# Environment Snapshot
-# --------------------
-# Timestamp:  2025-01-15 10:30:00
-# Node:       v20.10.0
-# npm:        10.2.3
-# Git Commit: a1b2c3d
-# Git Branch: main
-# Git Status: clean
-```
-
-### Benchmark Tasks
-
-Four standardized tasks in `/tools/benchmarks/benchmark-tasks.md`:
-
-| Task | Type | Description |
-|------|------|-------------|
-| A | Feature | Implement a small feature (e.g., stack peek) |
-| B | Refactor | Refactor a module without changing behavior |
-| C | Testing | Add tests to an untested area |
-| D | Debug | Diagnose and fix a failing test |
-
-### Monthly Usage
-
-1. **Run 1-2 benchmarks per month** (alternate task types)
-2. **Copy the checklist** from `/tools/benchmarks/run-checklist.md`
-3. **Track metrics** during the run:
-   - Time to first PR
-   - Agent iterations
-   - Rework loops
-   - Defects found (self vs review)
-   - Guardrails added
-4. **Log results** in `/docs/benchmarks/runs/YYYY-MM-benchmark.md`
-5. **Compare trends** month-over-month
-
-### Key Files
-
-| Path | Purpose |
-|------|---------|
-| `/tools/benchmarks/benchmark-tasks.md` | Task definitions |
-| `/tools/benchmarks/run-checklist.md` | Per-run checklist |
-| `/tools/capture-env.js` | Environment capture script |
-| `/docs/benchmarks/README.md` | Metrics guide |
-| `/docs/benchmarks/TEMPLATE.md` | Run log template |
-
-See `/docs/benchmarks/README.md` for full details.
 
 ---
 

@@ -19,9 +19,9 @@ Engineering logs serve as the **project memory**. They capture:
 - Remember why past decisions were made
 - Avoid repeating mistakes
 
-### For AI Agents
+### For Future Contributors
 
-- Provide context for future sessions
+- Provide context for new or returning team members
 - Understand project conventions
 - Make informed decisions consistent with project history
 
