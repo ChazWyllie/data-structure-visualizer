@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateTopoSortSteps } from '../visualizers/topological-sort';
-import type { GraphData } from '../visualizers/graph-shared';
+import { generateTopoSortSteps } from '../visualizers/graphs/topological-sort';
+import type { GraphData } from '../visualizers/graphs/graph-shared';
 
 function createSimpleDAG(): GraphData {
   // A → B → C

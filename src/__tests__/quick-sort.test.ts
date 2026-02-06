@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateQuickSortSteps } from '../visualizers/quick-sort';
+import { generateQuickSortSteps } from '../visualizers/sorting/quick-sort';
 
 describe('generateQuickSortSteps', () => {
   it('should return steps that end with a sorted array', () => {

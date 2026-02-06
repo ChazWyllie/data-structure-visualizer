@@ -8,8 +8,8 @@ import {
   generateInsertSteps,
   generateSearchSteps,
   generateInorderSteps,
-} from '../visualizers/binary-search-tree';
-import type { BSTNode } from '../visualizers/binary-search-tree';
+} from '../visualizers/trees/binary-search-tree';
+import type { BSTNode } from '../visualizers/trees/binary-search-tree';
 
 // Helper to build a BST from values
 function buildBST(values: number[]): BSTNode | null {

@@ -10,7 +10,7 @@ import {
   reduceArrayEvent,
   reduceAllEvents,
   isSorted,
-} from '../visualizers/bubble-sort.events';
+} from '../visualizers/sorting/bubble-sort.events';
 import {
   generatePushEvents,
   generatePopEvents,
@@ -21,7 +21,7 @@ import {
   peek,
   isEmpty,
   isFull,
-} from '../visualizers/stack.events';
+} from '../visualizers/linear/stack.events';
 import type { ArrayEvent, StackEvent } from '../core/events';
 
 // =============================================================================

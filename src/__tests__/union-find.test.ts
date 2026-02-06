@@ -8,7 +8,7 @@ import {
   generateFindSteps,
   generateUnionSteps,
   generateConnectedSteps,
-} from '../visualizers/union-find';
+} from '../visualizers/linear/union-find';
 
 type NodeState = 'default' | 'current' | 'root' | 'path' | 'merged' | 'found';
 

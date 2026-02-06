@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateSelectionSortSteps } from '../visualizers/selection-sort';
+import { generateSelectionSortSteps } from '../visualizers/sorting/selection-sort';
 
 describe('generateSelectionSortSteps', () => {
   it('should return steps that end with a sorted array', () => {
