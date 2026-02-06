@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateDijkstraSteps } from '../visualizers/dijkstra';
-import type { GraphData } from '../visualizers/graph-shared';
+import { generateDijkstraSteps } from '../visualizers/graphs/dijkstra';
+import type { GraphData } from '../visualizers/graphs/graph-shared';
 
 function createSimpleGraph(): GraphData {
   // A -- B -- C (linear path, weights 2 and 3)

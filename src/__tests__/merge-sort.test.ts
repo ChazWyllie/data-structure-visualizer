@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateMergeSortSteps } from '../visualizers/merge-sort';
+import { generateMergeSortSteps } from '../visualizers/sorting/merge-sort';
 
 describe('generateMergeSortSteps', () => {
   it('should return steps that end with a sorted array', () => {
