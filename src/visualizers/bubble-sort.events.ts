@@ -15,6 +15,12 @@ import type {
   InitArrayEvent,
   CompleteEvent,
 } from '../core/events';
+import {
+  buildElementSnapshot,
+  buildValueStates,
+  createBaseModelState,
+  reduceEvents,
+} from './event-helpers';
 
 // =============================================================================
 // Initial State Factory
@@ -26,13 +32,10 @@ import type {
 export function createInitialArrayState(values: number[]): ArrayModelState {
   return {
     values: [...values],
-    states: values.map(() => 'default'),
+    states: buildValueStates(values, () => 'default'),
     activeIndices: [],
     modifiedIndices: [],
-    comparisons: 0,
-    swaps: 0,
-    reads: 0,
-    writes: 0,
+    ...createBaseModelState(),
   };
 }
 
@@ -222,10 +225,7 @@ export function deriveArraySnapshot(state: ArrayModelState): {
   elements: { value: number; state: string }[];
 } {
   return {
-    elements: state.values.map((value, i) => ({
-      value,
-      state: state.states[i],
-    })),
+    elements: buildElementSnapshot(state.values, state.states, 'default'),
   };
 }
 
@@ -252,5 +252,5 @@ export function reduceAllEvents(
   initialState: ArrayModelState,
   events: ArrayEvent[]
 ): ArrayModelState {
-  return events.reduce(reduceArrayEvent, initialState);
+  return reduceEvents(initialState, events, reduceArrayEvent);
 }
