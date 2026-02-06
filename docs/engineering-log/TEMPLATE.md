@@ -106,6 +106,6 @@ npm run check output summary:
 
 ## References
 
-- Related spec: `prompts/specs/[spec-name].md`
+- Related issue or design doc: [link or ID]
 - Related PR: #XX (if applicable)
 - External docs: [link]
