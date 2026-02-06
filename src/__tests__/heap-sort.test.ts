@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateHeapSortSteps } from '../visualizers/heap-sort';
+import { generateHeapSortSteps } from '../visualizers/sorting/heap-sort';
 
 describe('generateHeapSortSteps', () => {
   it('should return steps that end with a sorted array', () => {

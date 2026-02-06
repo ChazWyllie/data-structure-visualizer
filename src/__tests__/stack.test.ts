@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generatePushSteps, generatePopSteps } from '../visualizers/stack';
+import { generatePushSteps, generatePopSteps } from '../visualizers/linear/stack';
 import type { StackElement } from '../core/types';
 
 const createStack = (values: number[]): StackElement<number>[] =>

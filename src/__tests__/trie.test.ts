@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateInsertSteps, generateSearchSteps, generatePrefixSteps } from '../visualizers/trie';
+import { generateInsertSteps, generateSearchSteps, generatePrefixSteps } from '../visualizers/trees/trie';
 
 // Helper to create a sample trie
 interface TestTrieNode {

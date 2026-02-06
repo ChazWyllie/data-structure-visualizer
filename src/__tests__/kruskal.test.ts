@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateKruskalSteps } from '../visualizers/kruskal';
-import type { GraphData } from '../visualizers/graph-shared';
+import { generateKruskalSteps } from '../visualizers/graphs/kruskal';
+import type { GraphData } from '../visualizers/graphs/graph-shared';
 
 function createSimpleGraph(): GraphData {
   return {

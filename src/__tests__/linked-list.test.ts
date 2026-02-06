@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateDeleteByValueSteps, generateInsertAtTailSteps } from '../visualizers/linked-list';
+import { generateDeleteByValueSteps, generateInsertAtTailSteps } from '../visualizers/linear/linked-list';
 import type { LinkedListNode } from '../core/types';
 
 const createList = (values: number[]): LinkedListNode<number>[] =>

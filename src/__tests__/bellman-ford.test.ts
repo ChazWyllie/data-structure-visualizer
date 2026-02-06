@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateBellmanFordSteps } from '../visualizers/bellman-ford';
-import type { GraphData } from '../visualizers/graph-shared';
+import { generateBellmanFordSteps } from '../visualizers/graphs/bellman-ford';
+import type { GraphData } from '../visualizers/graphs/graph-shared';
 
 function createSimpleGraph(): GraphData {
   // A → B → C with weights 2 and 3

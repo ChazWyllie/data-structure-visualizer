@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateBubbleSortSteps } from '../visualizers/bubble-sort';
+import { generateBubbleSortSteps } from '../visualizers/sorting/bubble-sort';
 
 describe('generateBubbleSortSteps', () => {
   it('should return steps that end with a sorted array', () => {

@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generatePrimSteps } from '../visualizers/prim';
-import type { GraphData } from '../visualizers/graph-shared';
+import { generatePrimSteps } from '../visualizers/graphs/prim';
+import type { GraphData } from '../visualizers/graphs/graph-shared';
 
 function createSimpleGraph(): GraphData {
   return {
