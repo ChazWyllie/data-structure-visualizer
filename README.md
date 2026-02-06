@@ -164,40 +164,6 @@ Test files are in `src/__tests__/`:
 
 ---
 
-## Agent Workflow
-
-This project supports AI-assisted development with structured workflows.
-
-### Workflow Overview
-
-```
-Spec → Diff → Test → Review
-```
-
-1. **Spec** — Write a feature spec before implementation (`prompts/templates/feature-spec.md`)
-2. **Diff** — Make small, focused changes (< 100 lines per file)
-3. **Test** — Run `npm run check` after every change
-4. **Review** — Fill out PR contract with verification checklist
-
-### Key Files
-
-| File | Purpose |
-|------|---------|
-| `prompts/PLAYBOOK.md` | Core rules for AI-assisted development |
-| `prompts/templates/feature-spec.md` | Feature specification template |
-| `prompts/templates/pr-contract.md` | PR description template |
-| `prompts/specs/` | Active and completed specifications |
-| `docs/engineering-log/` | Decision logs and session notes |
-
-### Rules of Engagement
-
-- **Small diffs**: Touch only files explicitly listed in the spec
-- **List before edit**: Always read files before modifying
-- **Test always**: Run `npm run check` before and after changes
-- **Document risks**: Identify top 3 plausible regressions for each change
-
----
-
 ## Quality Gates
 
 The project enforces code quality at multiple levels to prevent low-quality output.
