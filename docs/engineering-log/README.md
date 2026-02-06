@@ -21,8 +21,8 @@ Engineering logs serve as the **project memory**. They capture:
 
 ### For Future Contributors
 
-- Provide context for new or returning team members
-- Understand project conventions
+- Provide context for future sessions
+- Help new team members understand project conventions
 - Make informed decisions consistent with project history
 
 ## What to Record
