@@ -23,7 +23,7 @@ Measure and improve the efficiency of AI-assisted development by tracking key me
 
 ## Benchmark Tasks
 
-Four standardized tasks defined in `/tools/benchmarks/benchmark-tasks.md`:
+Four standardized tasks defined in `/docs/benchmarks/benchmark-tasks.md`:
 
 | Task | Type | Complexity |
 |------|------|------------|
@@ -49,7 +49,7 @@ npm run check
 
 ### 2. Execute
 
-1. Copy the checklist from `/tools/benchmarks/run-checklist.md`
+1. Copy the checklist from `/docs/benchmarks/run-checklist.md`
 2. Select a task (A, B, C, or D)
 3. Create a branch: `git checkout -b benchmark/YYYY-MM-DD-task-X`
 4. Start timer and begin work

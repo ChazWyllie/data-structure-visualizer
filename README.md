@@ -273,7 +273,7 @@ npm run benchmark:env
 
 ### Benchmark Tasks
 
-Four standardized tasks in `/tools/benchmarks/benchmark-tasks.md`:
+Four standardized tasks in `/docs/benchmarks/benchmark-tasks.md`:
 
 | Task | Type | Description |
 |------|------|-------------|
@@ -285,7 +285,7 @@ Four standardized tasks in `/tools/benchmarks/benchmark-tasks.md`:
 ### Monthly Usage
 
 1. **Run 1-2 benchmarks per month** (alternate task types)
-2. **Copy the checklist** from `/tools/benchmarks/run-checklist.md`
+2. **Copy the checklist** from `/docs/benchmarks/run-checklist.md`
 3. **Track metrics** during the run:
    - Time to first PR
    - Agent iterations
@@ -299,8 +299,8 @@ Four standardized tasks in `/tools/benchmarks/benchmark-tasks.md`:
 
 | Path | Purpose |
 |------|---------|
-| `/tools/benchmarks/benchmark-tasks.md` | Task definitions |
-| `/tools/benchmarks/run-checklist.md` | Per-run checklist |
+| `/docs/benchmarks/benchmark-tasks.md` | Task definitions |
+| `/docs/benchmarks/run-checklist.md` | Per-run checklist |
 | `/tools/capture-env.js` | Environment capture script |
 | `/docs/benchmarks/README.md` | Metrics guide |
 | `/docs/benchmarks/TEMPLATE.md` | Run log template |
