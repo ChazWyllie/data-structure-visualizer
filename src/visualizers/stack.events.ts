@@ -17,6 +17,12 @@ import type {
   MessageEvent,
   CompleteEvent,
 } from '../core/events';
+import {
+  buildElementSnapshot,
+  buildValueStates,
+  createBaseModelState,
+  reduceEvents,
+} from './event-helpers';
 
 // =============================================================================
 // Initial State Factory
@@ -32,11 +38,10 @@ export function createInitialStackState(
   return {
     values: [...values],
     maxSize,
-    states: values.map((_, i) => (i === values.length - 1 ? 'top' : 'default')),
-    comparisons: 0,
-    swaps: 0,
-    reads: 0,
-    writes: 0,
+    states: buildValueStates(values, (index, currentValues) =>
+      index === currentValues.length - 1 ? 'top' : 'default'
+    ),
+    ...createBaseModelState(),
     error: undefined,
   };
 }
@@ -260,10 +265,7 @@ export function deriveStackSnapshot(state: StackModelState): {
   maxSize: number;
 } {
   return {
-    elements: state.values.map((value, i) => ({
-      value,
-      state: state.states[i] ?? 'default',
-    })),
+    elements: buildElementSnapshot(state.values, state.states, 'default'),
     maxSize: state.maxSize,
   };
 }
@@ -279,7 +281,7 @@ export function reduceAllStackEvents(
   initialState: StackModelState,
   events: StackEvent[]
 ): StackModelState {
-  return events.reduce(reduceStackEvent, initialState);
+  return reduceEvents(initialState, events, reduceStackEvent);
 }
 
 /**
