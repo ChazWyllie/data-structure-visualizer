@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateEnqueueSteps, generateDequeueSteps } from '../visualizers/queue';
+import { generateEnqueueSteps, generateDequeueSteps } from '../visualizers/linear/queue';
 import type { QueueElement } from '../core/types';
 
 const createQueue = (values: number[]): QueueElement<number>[] =>

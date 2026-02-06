@@ -8,7 +8,7 @@ import {
   generateLookupSteps,
   generateDeleteSteps,
   generateResizeSteps,
-} from '../visualizers/hash-table';
+} from '../visualizers/linear/hash-table';
 
 type EntryState = 'default' | 'hashing' | 'collision' | 'inserted' | 'found' | 'deleted';
 

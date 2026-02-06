@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { generateAStarSteps, createSampleGrid } from '../visualizers/a-star';
+import { generateAStarSteps, createSampleGrid } from '../visualizers/graphs/a-star';
 
 type CellType = 'empty' | 'wall' | 'start' | 'end' | 'path' | 'visited' | 'frontier' | 'current';
 

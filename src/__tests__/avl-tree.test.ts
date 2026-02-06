@@ -22,7 +22,7 @@ interface TestAVLData {
 
 // Import the actual step generators
 // Note: We need to import after defining types to use the module's exports
-import { generateInsertSteps, generateSearchSteps } from '../visualizers/avl-tree';
+import { generateInsertSteps, generateSearchSteps } from '../visualizers/trees/avl-tree';
 
 function createEmptyAVL(): TestAVLData {
   return {

@@ -8,7 +8,7 @@ import {
   generatePopSteps,
   generatePeekSteps,
   generateHeapifySteps,
-} from '../visualizers/heap';
+} from '../visualizers/linear/heap';
 
 describe('Heap Visualizer', () => {
   describe('generatePushSteps', () => {
